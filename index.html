@@ -1,0 +1,641 @@
+<!doctype html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Niva Coin App</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+  <style type="text/tailwindcss">
+    body { font-family: 'Inter', sans-serif; } .page { display: none; } .page.active { display: block; } .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #00D27F; width: 40px; height: 40px; animation: spin 1s linear infinite; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } .loading-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); display:flex; flex-direction: column; justify-content:center; align-items:center; z-index:9999; } .loading-overlay p { color: white; margin-top: 10px; font-size: 0.9rem; } .hidden { display: none !important; } .payment-method-label { border: 2px solid #4A4A4A; transition: all 0.2s ease-in-out; } .payment-method-radio:checked + .payment-method-label { border-color: #00D27F; background-color: #00D27F20; }
+    #media-modal { background-color: rgba(0,0,0,0.8); }
+    
+    /* Battery Design for T&C */
+    .battery-container { position: relative; padding-top: 2rem; }
+    .battery-container::before { content: ''; position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 20%; height: 8px; background-color: #4A4A4A; border-radius: 4px 4px 0 0; }
+    
+    /* --- Light Mode --- */
+    html.light body { background-color: #f0f2f5; color: #1c1e21; }
+    html.light .bg-background { background-color: #f0f2f5; }
+    html.light .text-text-primary { color: #050505; }
+    html.light .text-text-secondary { color: #65676B; }
+    html.light .bg-card-background { background-color: #ffffff; }
+    html.light .border-slate-700 { border-color: #ced0d4; }
+    html.light .border-text-secondary\/10 { border-color: rgba(101, 103, 107, 0.2); }
+    html.light .bg-card-background\/90 { background-color: rgba(255, 255, 255, 0.9); }
+    html.light .form-input { color: #050505; background-color: #f0f2f5; border-color: #ced0d4; }
+    html.light .form-input::placeholder { color: #8a8d91; }
+    html.light .nav-btn.text-text-secondary { color: #65676B; }
+    html.light .payment-method-label { border-color: #ced0d4; }
+    html.light .text-white { color: #050505; }
+    html.light .text-slate-300 { color: #65676B; }
+    html.light .text-slate-400 { color: #8a8d91; }
+    html.light .border-slate-800 { border-color: #e0e0e0; }
+    html.light .battery-container::before { background-color: #ced0d4; }
+  </style>
+  <script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary": "#00D27F", "background": "#000000", "card-background": "#1A1A1A", "text-primary": "#FFFFFF", "text-secondary": "#A0A0A0", }, fontFamily: { "display": ["Inter", "sans-serif"] } } } }</script>
+</head>
+<body class="bg-background font-display text-text-primary antialiased">
+
+  <div id="loading-overlay" class="loading-overlay hidden"><div class="loader"></div><p id="loader-text"></p></div>
+  <div id="error-container" class="hidden flex items-center justify-center min-h-screen p-4 text-center"><p>This app can only be used inside Telegram.</p></div>
+  <div id="media-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4">
+    <div class="absolute inset-0" id="modal-backdrop"></div>
+    <span id="close-modal" class="absolute top-4 right-4 text-white text-4xl cursor-pointer z-10">&times;</span>
+    <img id="modal-image" src="" alt="Full size media" class="hidden max-w-full max-h-full z-20 rounded-lg">
+    <video id="modal-video" src="" controls autoplay class="hidden max-w-full max-h-full z-20 rounded-lg"></video>
+  </div>
+
+  <!-- System Offline Notice Page -->
+  <main id="page-system-off" class="page min-h-screen flex flex-col items-center justify-center p-6 text-center">
+      <div class="w-full max-w-md">
+          <div class="flex justify-center mb-6"><span class="material-symbols-outlined text-7xl text-primary">hourglass_top</span></div>
+          <h1 class="text-2xl font-bold text-text-primary mb-3">Service Temporarily Unavailable</h1>
+          <div id="system-off-notice-content" class="text-text-secondary leading-relaxed"><p>Loading notice...</p></div>
+          <p class="text-xs text-slate-500 mt-8">Please check back later or visit our Telegram channel for updates.</p>
+      </div>
+  </main>
+
+  <div id="app-container" class="relative min-h-screen w-full flex-col hidden">
+    <!-- Dashboard -->
+    <main id="page-dashboard" class="page flex-1 pb-28">
+      <div class="flex items-center p-4"><h2 class="text-xl font-bold flex-1 text-text-secondary">Dashboard</h2><div class="flex size-10 shrink-0 items-center justify-end"><img class="user-profile-pic object-cover rounded-full size-10 border-2 border-primary" src="logo19.jpg" alt="User Avatar"></div></div>
+      <h1 id="welcome-message" class="text-3xl font-bold px-4 pb-4 pt-4">Welcome!</h1>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-2">
+        <button data-page="page-sell-niva" class="nav-btn-internal flex w-full items-center justify-center rounded-lg h-14 bg-emerald-500 text-white font-bold gap-3 px-4"> <img src="./niva.jpg" class="h-8 w-8 rounded-full" alt="Niva Coin"> <span>Sell Niva</span> </button>
+        <button data-page="page-sell-fira" class="nav-btn-internal flex w-full items-center justify-center rounded-lg h-14 bg-amber-500 text-white font-bold gap-3 px-4"> <img src="./fira.jpg" class="h-8 w-8 rounded-full" alt="Fira Coin"> <span>Sell Fira</span> </button>
+        <button data-page="page-sell-top-coin" class="nav-btn-internal flex w-full items-center justify-center rounded-lg h-14 bg-sky-500 text-white font-bold gap-3 px-4"> <img src="./top.jpg" class="h-8 w-8 rounded-full" alt="Top Coin"> <span>Sell Top Coin</span> </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+        <div><div class="flex flex-col rounded-lg bg-card-background p-4"><div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center"><span class="material-symbols-outlined text-primary text-lg">toll</span></div><p>Niva Coin Sales</p></div><div class="flex items-end justify-between"><div class="flex flex-col"><p id="dashboard-niva-requests" class="text-sm text-text-secondary">...</p><p id="dashboard-niva-total" class="text-sm text-text-secondary">...</p></div><button class="nav-btn-internal flex items-center justify-center rounded-md h-8 px-3 bg-card-background text-primary border border-primary text-xs font-medium" data-page="page-history">View</button></div></div></div>
+        <div><div class="flex flex-col rounded-lg bg-card-background p-4"><div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center"><span class="text-primary font-bold text-xl">F</span></div><p>Fira Coin Sales</p></div><div class="flex items-end justify-between"><div class="flex flex-col"><p id="dashboard-fira-requests" class="text-sm text-text-secondary">...</p><p id="dashboard-fira-total" class="text-sm text-text-secondary">...</p></div><button class="nav-btn-internal flex items-center justify-center rounded-md h-8 px-3 bg-card-background text-primary border border-primary text-xs font-medium" data-page="page-history">View</button></div></div></div>
+        <div class="col-span-1 md:col-span-2"><div class="flex flex-col rounded-lg bg-card-background p-4"><div class="flex justify-between mb-2"><p>Market Rates</p><p class="text-xs font-bold text-red-500">Live</p></div><div class="flex flex-col gap-1"><p class="text-sm">Fira Coin: <span id="dashboard-fira-rate" class="text-primary font-bold">...</span></p></div></div></div>
+      </div>
+      <a href="https://t.me/earno_vate_earn" target="_blank" class="fixed bottom-24 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-1.37.2-1.64l16.43-6.2c.75-.28 1.45.27 1.23 1.22l-2.67 12.3c-.22.99-1.21 1.22-1.87.73l-4.11-3.4-1.98 1.9z"></path></svg></a>
+    </main>
+    
+    <!-- Sell Niva Page -->
+    <main id="page-sell-niva" class="page flex-grow p-4 pb-28">
+        <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-full max-w-md">
+                <div class="flex justify-center mb-6"><span class="material-symbols-outlined text-7xl text-primary">construction</span></div>
+                <h1 class="text-2xl font-bold text-text-primary mb-3">Niva Coin Sales Unavailable</h1>
+                <p class="text-text-secondary leading-relaxed">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p>
+                <button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Go to Dashboard</button>
+            </div>
+        </div>
+        <div class="coin-system-content">
+            <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Your Niva Coin</h1><div class="size-8"></div></header>
+            <div id="niva-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-lg flex items-center gap-4 my-4 transition-transform active:scale-[0.98]"><div class="flex-1"><p class="text-sm text-text-secondary">Transfer to ID</p><p id="niva-transfer-id" class="text-lg font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
+            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Niva Rates</h3><div id="niva-rates-display" class="space-y-2 text-sm"></div></div>
+            <form id="sell-niva-form" class="space-y-6">
+                <div><label class="block mb-2">Amount to Sell</label><div class="relative"><input id="niva-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-16" placeholder="e.g., 1000" type="number" step="any"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">NIVA</span></div><p id="niva-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
+                <div><h2 class="text-lg font-bold mb-2">Proof of Transfer</h2><div class="relative w-full min-h-[160px] p-6 border-2 border-dashed border-slate-700 rounded-xl bg-card-background"><div id="niva-upload-prompt" class="flex flex-col items-center justify-center text-center cursor-pointer"><span class="material-symbols-outlined text-4xl text-slate-400 mb-2">videocam</span><p>Attach Screen Recording</p></div><div id="niva-preview-container" class="hidden absolute inset-2"><video id="niva-video-preview" src="#" class="w-full h-full rounded-lg object-cover" muted playsinline></video></div><input id="niva-file-input" required class="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="video/*"/></div><button id="remove-niva-video-btn" type="button" class="hidden w-full flex items-center justify-center gap-2 mt-2 bg-red-500/20 text-red-400 font-semibold py-2 rounded-lg"><span class="material-symbols-outlined text-xl">delete</span><span>Remove Video</span></button></div>
+                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="niva-bkash" name="paymentMethodNiva" value="Bkash" class="hidden payment-method-radio" required checked><label for="niva-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="niva-nagad" name="paymentMethodNiva" value="Nagad" class="hidden payment-method-radio" required><label for="niva-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block">Payment Number</span><input id="niva-payment-number" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
+                <button type="submit" class="w-full bg-primary text-background font-bold py-3.5 px-6 rounded-lg !mt-8">Submit Sell Order</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Sell Fira Page -->
+    <main id="page-sell-fira" class="page flex-grow p-4 pb-28">
+        <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-full max-w-md">
+                <div class="flex justify-center mb-6"><span class="material-symbols-outlined text-7xl text-primary">construction</span></div>
+                <h1 class="text-2xl font-bold text-text-primary mb-3">Fira Coin Sales Unavailable</h1>
+                <p class="text-text-secondary leading-relaxed">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p>
+                <button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Go to Dashboard</button>
+            </div>
+        </div>
+        <div class="coin-system-content">
+            <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Your Fira Coin</h1><div class="size-8"></div></header>
+            <div id="fira-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-lg flex items-center gap-4 my-4 transition-transform active:scale-[0.98]"><div class="flex-1"><p class="text-sm text-text-secondary">Transfer to ID</p><p id="fira-transfer-id" class="text-lg font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
+            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Fira Rates</h3><div id="fira-rates-display" class="space-y-2 text-sm"></div></div>
+            <form id="sell-fira-form" class="space-y-6">
+                <div><label class="block mb-2">Amount to Sell</label><div class="relative"><input id="fira-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-16" placeholder="e.g., 1000" type="number" step="any"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">FIRA</span></div><p id="fira-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
+                <div><h2 class="text-lg font-bold mb-2">Proof of Transfer</h2><div class="relative w-full min-h-[160px] p-6 border-2 border-dashed border-slate-700 rounded-xl bg-card-background"><div id="fira-upload-prompt" class="flex flex-col items-center justify-center text-center cursor-pointer"><span class="material-symbols-outlined text-4xl text-slate-400 mb-2">videocam</span><p>Attach Screen Recording</p></div><div id="fira-preview-container" class="hidden absolute inset-2"><video id="fira-video-preview" src="#" class="w-full h-full rounded-lg object-cover" muted playsinline></video></div><input id="fira-file-input" required class="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="video/*"/></div><button id="remove-fira-video-btn" type="button" class="hidden w-full flex items-center justify-center gap-2 mt-2 bg-red-500/20 text-red-400 font-semibold py-2 rounded-lg"><span class="material-symbols-outlined text-xl">delete</span><span>Remove Video</span></button></div>
+                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="fira-bkash" name="paymentMethodFira" value="Bkash" class="hidden payment-method-radio" required checked><label for="fira-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="fira-nagad" name="paymentMethodFira" value="Nagad" class="hidden payment-method-radio" required><label for="fira-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block">Payment Number</span><input id="fira-payment-number" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
+                <button type="submit" class="w-full bg-primary text-background font-bold py-3.5 px-6 rounded-lg !mt-8">Submit Sell Order</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Sell Top Coin Page -->
+    <main id="page-sell-top-coin" class="page flex-grow p-4 pb-28">
+        <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-full max-w-md">
+                <div class="flex justify-center mb-6"><span class="material-symbols-outlined text-7xl text-primary">construction</span></div>
+                <h1 class="text-2xl font-bold text-text-primary mb-3">Top Coin Sales Unavailable</h1>
+                <p class="text-text-secondary leading-relaxed">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p>
+                <button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Go to Dashboard</button>
+            </div>
+        </div>
+        <div class="coin-system-content">
+            <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Your Top Coin</h1><div class="size-8"></div></header>
+            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Top Coin Rates</h3><div id="top-coin-rates-display" class="space-y-2 text-sm"></div></div>
+            <form id="sell-top-coin-form" class="space-y-6">
+                <div><label class="block mb-2">Amount to Sell</label><div class="relative"><input id="top-coin-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-24" placeholder="e.g., 1000" type="number" step="any"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">TOP COIN</span></div><p id="top-coin-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
+                <div><label for="top-coin-coupon-input" class="block mb-2 text-lg font-bold">Coupon Code</label><textarea id="top-coin-coupon-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background p-4" placeholder="Paste your coupon code here" rows="4"></textarea></div>
+                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="top-coin-bkash" name="paymentMethodTopCoin" value="Bkash" class="hidden payment-method-radio" required checked><label for="top-coin-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="top-coin-nagad" name="paymentMethodTopCoin" value="Nagad" class="hidden payment-method-radio" required><label for="top-coin-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block">Payment Number</span><input id="top-coin-payment-number" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
+                <button type="submit" class="w-full bg-primary text-background font-bold py-3.5 px-6 rounded-lg !mt-8">Submit Sell Order</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- History Page -->
+    <main id="page-history" class="page flex-1 pb-28"><header class="py-4 px-4"><h1 class="text-lg font-bold text-center">My Sell Requests</h1></header><div id="history-list-container" class="px-4 pt-2 space-y-3"><div class="text-center text-text-secondary">Loading history...</div></div></main>
+    
+    <!-- Profile Page -->
+    <main id="page-profile" class="page flex-1 p-4 pb-28">
+      <h1 class="text-lg font-bold text-center mb-6">Settings</h1>
+      <div class="flex flex-col gap-8">
+        <section class="flex w-full items-center gap-4 rounded-xl bg-card-background p-4"><div class="shrink-0"><img class="user-profile-pic object-cover rounded-full h-16 w-16 border-2 border-primary" src="logo19.jpg" alt="User Avatar"></div><div class="min-w-0"><p id="profile-name" class="text-lg font-bold truncate">...</p><p id="profile-id" class="text-sm text-text-secondary break-all">...</p></div></section>
+        <section><h2 class="px-2 mb-3 text-sm font-semibold uppercase text-text-secondary">App Settings</h2><div class="bg-card-background rounded-xl p-2"><div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><span id="theme-icon" class="material-symbols-outlined"></span><span>Light Mode</span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="theme-toggle" class="sr-only peer"><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div><div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><span class="material-symbols-outlined">description</span><span>Terms & Conditions</span></div><button class="nav-btn-internal text-text-secondary" data-page="page-terms"><span class="material-symbols-outlined">info</span></button></div></div></section>
+        
+        <!-- Admin Panel Section -->
+        <section id="admin-panel" class="hidden">
+          <h2 class="px-2 mb-3 text-sm font-semibold uppercase text-text-secondary">Admin Panel</h2>
+          <div class="bg-card-background rounded-xl p-4 space-y-4">
+            <h3 class="font-bold">Update Settings</h3>
+            <form id="update-rates-form" class="space-y-4">
+              <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">Main System Status</legend><div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><span id="system-status-icon" class="material-symbols-outlined"></span><span id="system-status-text"></span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="admin-system-status-toggle" class="sr-only peer"><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div><div><label for="admin-system-notice" class="block text-sm mb-1 mt-2">System Offline Notice</label><textarea id="admin-system-notice" rows="4" class="form-input w-full rounded-lg text-white border-slate-700 bg-background p-3" placeholder="Enter the notice to show users when the system is offline."></textarea></div></fieldset>
+              <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">Coin System Status</legend>
+                <div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><img src="./niva.jpg" class="h-6 w-6 rounded-full" alt="Niva Coin"><span>Niva Sell System</span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="admin-niva-system-status-toggle" class="sr-only peer"><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div>
+                <div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><img src="./fira.jpg" class="h-6 w-6 rounded-full" alt="Fira Coin"><span>Fira Sell System</span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="admin-fira-system-status-toggle" class="sr-only peer"><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div>
+                <div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><img src="./top.jpg" class="h-6 w-6 rounded-full" alt="Top Coin"><span>Top Coin Sell System</span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="admin-top-coin-system-status-toggle" class="sr-only peer"><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div>
+              </fieldset>
+              <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">Transfer IDs</legend><div class="space-y-3"><div><label for="admin-niva-transfer-id" class="block text-sm mb-1">Niva Transfer ID</label><input id="admin-niva-transfer-id" type="text" class="form-input w-full rounded-lg text-white border-slate-700 bg-background h-12 p-3" required></div><div><label for="admin-fira-transfer-id" class="block text-sm mb-1">Fira Transfer ID</label><input id="admin-fira-transfer-id" type="text" class="form-input w-full rounded-lg text-white border-slate-700 bg-background h-12 p-3" required></div></div></fieldset>
+              <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">Coin Rates (/k)</legend><div id="admin-coin-rates-container" class="space-y-6"></div></fieldset>
+              <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">App Content</legend><div><label for="admin-terms-conditions" class="block text-sm mb-1">Terms & Conditions</label><textarea id="admin-terms-conditions" rows="8" class="form-input w-full rounded-lg text-white border-slate-700 bg-background p-3"></textarea></div></fieldset>
+              <button type="submit" class="w-full bg-primary text-background font-bold py-2.5 px-4 rounded-lg !mt-6">Update Settings</button>
+            </form>
+          </div>
+          <div class="mt-6"><h3 class="font-bold mb-3 px-2">All Sell Requests</h3><div id="admin-requests-container" class="space-y-3"><p class="text-center text-text-secondary">Loading requests...</p></div></div>
+        </section>
+        <section class="flex w-full items-center justify-between gap-4 rounded-xl bg-blue-900/50 p-4 border border-blue-700"><div class="flex items-center gap-4"><div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-1.37.2-1.64l16.43-6.2c.75-.28 1.45.27 1.23 1.22l-2.67 12.3c-.22.99-1.21 1.22-1.87.73l-4.11-3.4-1.98 1.9z"></path></svg></div><div><p class="font-bold text-white">Join Our Telegram</p><p class="text-sm text-blue-200">For news & updates</p></div></div><a href="https://t.me/earno_vate_earn" target="_blank" class="flex h-10 shrink-0 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-bold text-white">Join</a></section>
+        <div class="bg-blue-900/50 border border-blue-700 text-blue-300 text-sm rounded-lg p-3 text-center">সেল করার পূর্বে টেলিগ্রামের বিস্তারিত দেখে নিবেন</div>
+      </div>
+    </main>
+
+    <!-- Terms & Conditions Page -->
+    <main id="page-terms" class="page flex-grow p-4 pb-28">
+      <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-profile"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Terms & Conditions</h1><div class="size-8"></div></header>
+      <div class="mt-6"><div class="battery-container bg-card-background p-4 rounded-lg border border-slate-700"><div id="terms-content" class="text-sm text-text-secondary whitespace-pre-wrap">Loading...</div></div></div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 h-20 bg-card-background/90 backdrop-blur-sm border-t border-text-secondary/10">
+      <div class="grid h-full max-w-lg grid-cols-4 mx-auto">
+        <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-dashboard" data-nav="dashboard"><span class="material-symbols-outlined text-2xl mb-1">dashboard</span><span class="text-xs">Dashboard</span></button>
+        <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-dashboard" data-nav="sell"><span class="material-symbols-outlined text-2xl mb-1">add_circle</span><span class="text-xs">Sell</span></button>
+        <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-history" data-nav="history"><span class="material-symbols-outlined text-2xl mb-1">history</span><span class="text-xs">History</span></button>
+        <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-profile" data-nav="profile"><span class="material-symbols-outlined text-2xl mb-1">person</span><span class="text-xs">Profile</span></button>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const ADMIN_TELEGRAM_ID = '6703675335';
+    const MAX_FILE_SIZE_MB = 8;
+    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => document.querySelectorAll(selector);
+    const showLoader = (text = '') => {
+        $('#loader-text').textContent = text;
+        $('#loading-overlay').classList.remove('hidden');
+    };
+    const hideLoader = () => {
+        $('#loader-text').textContent = '';
+        $('#loading-overlay').classList.add('hidden');
+    };
+    
+    let telegramUser;
+    let tg; 
+    let marketRates = {};
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCAQtTRKgOizQjgqCbIZ_Z357LQD2Woee8",
+        authDomain: "earnovate-bot.firebaseapp.com",
+        databaseURL: "https://earnovate-bot-default-rtdb.firebaseio.com",
+        projectId: "earnovate-bot",
+        appId: "1:395184310691:web:9a0a2e5ad0e954b527b216",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function applyTheme(theme) {
+        const themeIcon = $('#theme-icon');
+        if (theme === 'light') {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+            if($('#theme-toggle')) $('#theme-toggle').checked = true;
+            if(themeIcon) themeIcon.textContent = 'light_mode';
+        } else {
+            document.documentElement.classList.remove('light');
+            document.documentElement.classList.add('dark');
+            if($('#theme-toggle')) $('#theme-toggle').checked = false;
+            if(themeIcon) themeIcon.textContent = 'dark_mode';
+        }
+    }
+
+    async function startApp() {
+        applyTheme(localStorage.getItem('theme') || 'dark');
+        try {
+            if (!window.Telegram || !window.Telegram.WebApp) throw new Error("Telegram Web App context not found.");
+            
+            tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            telegramUser = tg.initDataUnsafe?.user;
+            
+            if (!telegramUser?.id) throw new Error("Could not get Telegram user data.");
+            
+            const settingsSnapshot = await db.ref('settings').once('value');
+            const settings = settingsSnapshot.val() || {};
+            
+            const isSystemOnline = settings.systemStatus === 'on';
+            const isAdmin = telegramUser.id.toString() === ADMIN_TELEGRAM_ID;
+
+            if (!isSystemOnline && !isAdmin) {
+                $('#system-off-notice-content').innerHTML = (settings.systemNotice || "The service is currently undergoing maintenance. Please try again later.").replace(/\n/g, '<br>');
+                showPage('page-system-off');
+            } else {
+                initializeAppUI(settings);
+            }
+        } catch (error) {
+            $('#error-container').classList.remove('hidden');
+            $('#error-container').innerHTML = `<p>Error: ${error.message}</p>`;
+        }
+    }
+    
+    function initializeAppUI(settings) {
+        const { id, first_name, photo_url } = telegramUser;
+        $$('.user-profile-pic').forEach(p => p.src = photo_url || 'logo19.jpg');
+        $('#welcome-message').textContent = `Welcome, ${first_name || 'User'}!`;
+        $('#profile-name').textContent = first_name || 'User';
+        $('#profile-id').textContent = `Telegram ID: ${id}`;
+        
+        if (id.toString() === ADMIN_TELEGRAM_ID) { $('#admin-panel').classList.remove('hidden'); }
+        
+        $('#app-container').classList.remove('hidden');
+        setupEventListeners();
+        loadAndDisplayRates();
+        loadAppSettings();
+        showPage('page-dashboard');
+    }
+
+    function setupEventListeners() {
+        $$('.nav-btn, .nav-btn-internal').forEach(btn => {
+            btn.addEventListener('click', (e) => showPage(e.currentTarget.dataset.page));
+        });
+        $('#theme-toggle').addEventListener('change', (e) => {
+            const newTheme = e.target.checked ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        $('#niva-amount-input').addEventListener('input', () => calculatePayout('niva'));
+        setupVideoUpload('niva');
+        $('#sell-niva-form').addEventListener('submit', (e) => handleCoinSubmit(e, 'niva'));
+        $('#niva-transfer-id-box').addEventListener('click', () => copyToClipboard($('#niva-transfer-id').textContent));
+
+        $('#fira-amount-input').addEventListener('input', () => calculatePayout('fira'));
+        setupVideoUpload('fira');
+        $('#sell-fira-form').addEventListener('submit', (e) => handleCoinSubmit(e, 'fira'));
+        $('#fira-transfer-id-box').addEventListener('click', () => copyToClipboard($('#fira-transfer-id').textContent));
+        
+        $('#top-coin-amount-input').addEventListener('input', () => calculatePayout('top-coin'));
+        $('#sell-top-coin-form').addEventListener('submit', (e) => handleCoinSubmit(e, 'top-coin'));
+
+        $('#close-modal').addEventListener('click', hideMediaModal);
+        $('#modal-backdrop').addEventListener('click', hideMediaModal);
+        
+        if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
+            $('#update-rates-form').addEventListener('submit', handleSettingsUpdate);
+            $('#admin-system-status-toggle').addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                $('#system-status-text').textContent = isChecked ? 'System Online' : 'System Offline';
+                $('#system-status-icon').textContent = isChecked ? 'public' : 'public_off';
+            });
+        }
+    }
+
+    function copyToClipboard(text) {
+        if (!text || text === 'N/A') return;
+        navigator.clipboard.writeText(text).then(() => tg.showAlert('ID Copied!')).catch(err => tg.showAlert('Failed to copy ID.'));
+    }
+
+    function calculatePayout(coinType) {
+        const amount = parseFloat($(`#${coinType}-amount-input`).value) || 0;
+        const tiers = marketRates.coinRates?.[coinType]?.tiers || [];
+        
+        let selectedRate = 0;
+        if (tiers.length > 0) {
+            selectedRate = tiers[tiers.length - 1].rate;
+            for (const tier of tiers) {
+                if (amount <= tier.upTo) {
+                    selectedRate = tier.rate;
+                    break;
+                }
+            }
+        }
+
+        const payout = (amount / 1000 * selectedRate).toFixed(2);
+        $(`#${coinType}-payout-text`).textContent = `You will receive: ~৳${payout} (Rate: ৳${selectedRate}/k)`;
+    }
+    
+    const fileToBase64 = file => new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); });
+    const generateVideoThumbnail = file => new Promise((resolve, reject) => { const video = document.createElement('video'), canvas = document.createElement('canvas'), context = canvas.getContext('2d'), url = URL.createObjectURL(file); video.onloadedmetadata = () => { video.width = video.videoWidth; video.height = video.videoHeight; canvas.width = video.videoWidth; canvas.height = video.videoHeight; video.currentTime = 0; }; video.onseeked = () => { if (!context) return reject('Canvas context is not available'); context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight); URL.revokeObjectURL(url); resolve(canvas.toDataURL('image/jpeg', 0.8)); }; video.onerror = (err) => { URL.revokeObjectURL(url); reject(`Error loading video: ${err}`); }; video.src = url; video.load(); });
+
+    async function handleCoinSubmit(e, coinType) {
+        e.preventDefault();
+        try {
+            const form = e.target;
+            const amount = parseFloat($(`#${coinType}-amount-input`).value);
+            const paymentMethodName = 'paymentMethod' + coinType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+            const paymentMethod = form[paymentMethodName].value;
+            const paymentNumber = $(`#${coinType}-payment-number`).value;
+
+            const payload = createPayload(paymentMethod, paymentNumber);
+            payload.type = `${coinType}`;
+            payload.amount = amount;
+
+            if (coinType === 'niva' || coinType === 'fira') {
+                const file = $(`#${coinType}-file-input`).files[0];
+                if (!file) throw new Error("Please upload a screen recording.");
+                if (file.size > MAX_FILE_SIZE_BYTES) throw new Error(`Video too large. Max size: ${MAX_FILE_SIZE_MB} MB.`);
+                showLoader('Generating thumbnail...');
+                payload.proofVideoThumbnail = await generateVideoThumbnail(file);
+                showLoader('Encoding video...');
+                payload.proofVideoData = await fileToBase64(file);
+            } else if (coinType === 'top-coin') {
+                payload.couponCode = $(`#top-coin-coupon-input`).value;
+                if (!payload.couponCode.trim()) throw new Error("Please enter a coupon code.");
+            }
+
+            showLoader('Submitting...');
+            await db.ref(`requests/${payload.id}`).set(payload);
+            tg.showAlert('Request submitted successfully!');
+            form.reset();
+            if (coinType === 'niva' || coinType === 'fira') $(`#remove-${coinType}-video-btn`).click();
+            showPage('page-history');
+        } catch (err) {
+            tg.showAlert(`Submission Failed: ${err.message}`);
+        } finally { hideLoader(); }
+    }
+
+    async function handleSettingsUpdate(e) {
+        e.preventDefault(); showLoader('Updating...');
+        try {
+            const ratesToUpdate = {
+                transferIds: {
+                    niva: $('#admin-niva-transfer-id').value,
+                    fira: $('#admin-fira-transfer-id').value,
+                },
+                coinRates: {
+                    niva: {
+                        tiers: [
+                            { upTo: 10000, rate: parseFloat($('#admin-niva-rate-0').value) },
+                            { upTo: 50000, rate: parseFloat($('#admin-niva-rate-1').value) },
+                            { upTo: 100000, rate: parseFloat($('#admin-niva-rate-2').value) },
+                            { upTo: 500000, rate: parseFloat($('#admin-niva-rate-3').value) }
+                        ]
+                    },
+                    fira: {
+                        tiers: [
+                            { upTo: 10000, rate: parseFloat($('#admin-fira-rate-0').value) },
+                            { upTo: 50000, rate: parseFloat($('#admin-fira-rate-1').value) },
+                            { upTo: 100000, rate: parseFloat($('#admin-fira-rate-2').value) },
+                            { upTo: 500000, rate: parseFloat($('#admin-fira-rate-3').value) }
+                        ]
+                    },
+                    'top-coin': {
+                        tiers: [
+                            { upTo: 10000, rate: parseFloat($('#admin-top-coin-rate-0').value) },
+                            { upTo: 50000, rate: parseFloat($('#admin-top-coin-rate-1').value) },
+                            { upTo: 100000, rate: parseFloat($('#admin-top-coin-rate-2').value) },
+                            { upTo: 500000, rate: parseFloat($('#admin-top-coin-rate-3').value) }
+                        ]
+                    }
+                }
+            };
+            await db.ref('rates').set(ratesToUpdate);
+            
+            const settingsToUpdate = {
+                termsAndConditions: $('#admin-terms-conditions').value,
+                systemStatus: $('#admin-system-status-toggle').checked ? 'on' : 'off',
+                systemNotice: $('#admin-system-notice').value,
+                coinSystemStatus: {
+                    niva: $('#admin-niva-system-status-toggle').checked ? 'on' : 'off',
+                    fira: $('#admin-fira-system-status-toggle').checked ? 'on' : 'off',
+                    'top-coin': $('#admin-top-coin-system-status-toggle').checked ? 'on' : 'off',
+                }
+            };
+            await db.ref('settings').set(settingsToUpdate);
+            tg.showAlert('Settings updated successfully!');
+        } catch (err) {
+            tg.showAlert(`Update failed: ${err.message}`);
+        } finally { hideLoader(); }
+    }
+    
+    function setupVideoUpload(prefix) {
+        const fileInput = $(`#${prefix}-file-input`), previewContainer = $(`#${prefix}-preview-container`), videoPreview = $(`#${prefix}-video-preview`), uploadPrompt = $(`#${prefix}-upload-prompt`), removeBtn = $(`#remove-${prefix}-video-btn`);
+        fileInput.addEventListener('change', async () => { const file = fileInput.files[0]; if (file) { if (file.size > MAX_FILE_SIZE_BYTES) { tg.showAlert(`File is too large. Max size is ${MAX_FILE_SIZE_MB} MB.`); fileInput.value = ''; return; } try { showLoader('Generating preview...'); videoPreview.poster = await generateVideoThumbnail(file); videoPreview.src = URL.createObjectURL(file); uploadPrompt.classList.add('hidden'); previewContainer.classList.remove('hidden'); removeBtn.classList.remove('hidden'); } catch (error) { tg.showAlert("Could not create video preview. Please try another video file."); fileInput.value = ''; } finally { hideLoader(); } } });
+        removeBtn.addEventListener('click', (e) => { e.preventDefault(); if (videoPreview.src.startsWith('blob:')) URL.revokeObjectURL(videoPreview.src); fileInput.value = null; videoPreview.src = '#'; videoPreview.poster = ''; uploadPrompt.classList.remove('hidden'); previewContainer.classList.add('hidden'); removeBtn.classList.add('hidden'); });
+    }
+
+    function createPayload(paymentMethod, paymentNumber) {
+        const newRequestRef = db.ref('requests').push();
+        return { id: newRequestRef.key, telegramId: telegramUser.id.toString(), userName: telegramUser.first_name || 'User', status: 'Processing', requestDate: new Date().toISOString(), paymentMethod, paymentNumber };
+    }
+
+    function showPage(pageId) {
+        if (!pageId) return;
+        $$(".page").forEach(page => page.classList.remove("active"));
+        const pageElement = $(`#${pageId}`);
+        if (pageElement) pageElement.classList.add("active");
+        if (pageId === 'page-system-off') { if ($('#app-container')) $('#app-container').classList.add('hidden'); return; }
+        let activeNav = 'dashboard';
+        if (['page-sell-niva', 'page-sell-fira', 'page-sell-top-coin'].includes(pageId)) activeNav = 'sell';
+        else if (pageId === 'page-history') activeNav = 'history';
+        else if (pageId === 'page-profile' || pageId === 'page-terms') activeNav = 'profile';
+        $$(".nav-btn").forEach(btn => { const nav = btn.dataset.nav; const isActive = (nav === 'sell' && activeNav === 'sell') || (nav !== 'sell' && nav === activeNav); btn.classList.toggle("text-primary", isActive); btn.classList.toggle("text-text-secondary", !isActive); });
+        loadDashboardData();
+        if (pageId === "page-history") loadHistoryData();
+        if (pageId === "page-profile" && telegramUser.id.toString() === ADMIN_TELEGRAM_ID) loadAdminData();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderRates(coinType, ratesData) {
+        const ratesDisplay = $(`#${coinType}-rates-display`);
+        if (!ratesDisplay) return;
+        ratesDisplay.innerHTML = '';
+        if (ratesData) {
+            ratesData.forEach(tier => {
+                ratesDisplay.insertAdjacentHTML('beforeend', `<div class="flex justify-between items-center bg-background p-2 rounded-md"><span class="text-text-secondary">Up to ${tier.upTo.toLocaleString()} Coins</span><span class="text-primary font-bold">৳${tier.rate}/k</span></div>`);
+            });
+        }
+    }
+
+    function loadAndDisplayRates() {
+        db.ref('rates').on('value', (snapshot) => {
+            const rates = snapshot.val(); if(!rates) return; marketRates = rates;
+            $('#niva-transfer-id').textContent = rates.transferIds?.niva || 'N/A';
+            $('#fira-transfer-id').textContent = rates.transferIds?.fira || 'N/A';
+            
+            const nivaTiers = rates.coinRates?.niva?.tiers || [];
+            const firaTiers = rates.coinRates?.fira?.tiers || [];
+            const topCoinTiers = rates.coinRates?.['top-coin']?.tiers || [];
+
+            renderRates('niva', nivaTiers);
+            renderRates('fira', firaTiers);
+            renderRates('top-coin', topCoinTiers);
+            
+            const dashboardFiraRate = firaTiers.length > 0 ? firaTiers[0].rate : 0;
+            $('#dashboard-fira-rate').textContent = `৳${dashboardFiraRate} /k`;
+
+            if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
+                $('#admin-niva-transfer-id').value = rates.transferIds?.niva || '';
+                $('#admin-fira-transfer-id').value = rates.transferIds?.fira || '';
+                populateAdminRates(rates.coinRates);
+            }
+        });
+    }
+    
+    function updateCoinSystemStatus(settings) {
+        const isAdmin = telegramUser.id.toString() === ADMIN_TELEGRAM_ID;
+        const coinSystems = {
+            niva: settings.coinSystemStatus?.niva === 'on',
+            fira: settings.coinSystemStatus?.fira === 'on',
+            'top-coin': settings.coinSystemStatus?.['top-coin'] === 'on'
+        };
+
+        for (const coin in coinSystems) {
+            const page = $(`#page-sell-${coin}`);
+            if (page) {
+                const notice = page.querySelector('.coin-system-notice');
+                const content = page.querySelector('.coin-system-content');
+                
+                if (!isAdmin && !coinSystems[coin]) {
+                    notice.classList.remove('hidden');
+                    content.classList.add('hidden');
+                } else {
+                    notice.classList.add('hidden');
+                    content.classList.remove('hidden');
+                }
+            }
+        }
+    }
+
+    function loadAppSettings() {
+        db.ref('settings').on('value', (snapshot) => {
+            const settings = snapshot.val() || {};
+            $('#terms-content').textContent = settings.termsAndConditions || "Terms and conditions not set.";
+            updateCoinSystemStatus(settings);
+            if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
+                $('#admin-terms-conditions').value = settings.termsAndConditions || '';
+                $('#admin-system-notice').value = settings.systemNotice || '';
+                const isOnline = settings.systemStatus === 'on';
+                $('#admin-system-status-toggle').checked = isOnline;
+                $('#system-status-text').textContent = isOnline ? 'System Online' : 'System Offline';
+                $('#system-status-icon').textContent = isOnline ? 'public' : 'public_off';
+                
+                $('#admin-niva-system-status-toggle').checked = settings.coinSystemStatus?.niva === 'on';
+                $('#admin-fira-system-status-toggle').checked = settings.coinSystemStatus?.fira === 'on';
+                $('#admin-top-coin-system-status-toggle').checked = settings.coinSystemStatus?.['top-coin'] === 'on';
+            }
+        });
+    }
+    
+    async function loadHistoryData() {
+        const container = $("#history-list-container"); container.innerHTML = '<div class="text-center text-text-secondary">Loading history...</div>';
+        try {
+            const snapshot = await db.ref('requests').orderByChild('telegramId').equalTo(telegramUser.id.toString()).once('value');
+            const data = snapshot.val(); if (!data) { container.innerHTML = '<p class="text-center text-text-secondary">No requests found.</p>'; return; }
+            const userRequests = Object.values(data).sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate)); container.innerHTML = "";
+            userRequests.forEach(req => {
+                let iconContent = '', title = `${(req.amount || 0).toLocaleString()} ${req.type.split('-')[0].toUpperCase()}`;
+                if (req.type === 'niva') iconContent = `<span class="material-symbols-outlined text-primary text-2xl">toll</span>`;
+                else if (req.type === 'fira') iconContent = `<span class="text-primary font-bold text-2xl">F</span>`;
+                else if (req.type === 'top-coin') iconContent = `<span class="material-symbols-outlined text-primary text-2xl">workspace_premium</span>`; else return;
+                const date = new Date(req.requestDate).toLocaleDateString("en-GB"); let statusColor = req.status === "Completed" ? "green" : req.status === "Rejected" ? "red" : "orange";
+                container.insertAdjacentHTML("beforeend", `<div class="flex items-center gap-4 bg-card-background p-3 rounded-xl"><div class="flex items-center justify-center rounded-lg bg-primary/20 shrink-0 w-12 h-12">${iconContent}</div><div class="flex-1 min-w-0"><p class="font-medium truncate">${title}</p><p class="text-zinc-400 text-sm">${date}</p></div><div class="shrink-0"><div class="rounded-full px-3 py-1 bg-${statusColor}-400/20 text-${statusColor}-400"><p class="text-xs font-semibold">${req.status}</p></div></div></div>`);
+            });
+        } catch (e) { container.innerHTML = '<p class="text-center text-red-400">Could not load history.</p>'; }
+    }
+
+    async function loadDashboardData() {
+        if(!$("#dashboard-niva-requests")) return;
+        const snapshot = await db.ref('requests').orderByChild('telegramId').equalTo(telegramUser.id.toString()).once('value');
+        const data = snapshot.val(); let nivaRequests = 0, nivaTotal = 0, firaRequests = 0, firaTotal = 0;
+        if (data) { Object.values(data).forEach(req => { if (req.type === "niva") { nivaRequests++; nivaTotal += Number(req.amount || 0); } else if (req.type === "fira") { firaRequests++; firaTotal += Number(req.amount || 0); } }); }
+        $("#dashboard-niva-requests").textContent = `${nivaRequests} Requests`; $("#dashboard-niva-total").textContent = `${nivaTotal.toLocaleString()} Coins`; $("#dashboard-fira-requests").textContent = `${firaRequests} Requests`; $("#dashboard-fira-total").textContent = `${firaTotal.toLocaleString()} Coins`;
+    }
+    
+    function populateAdminRates(coinRates) {
+        const container = $('#admin-coin-rates-container');
+        container.innerHTML = '';
+        const coins = {
+            niva: { name: 'Niva Coin', tiers: coinRates?.niva?.tiers || [] },
+            fira: { name: 'Fira Coin', tiers: coinRates?.fira?.tiers || [] },
+            'top-coin': { name: 'Top Coin', tiers: coinRates?.['top-coin']?.tiers || [] }
+        };
+
+        const tierLabels = ['Up to 10k', 'Up to 50k', 'Up to 100k', '500k+'];
+
+        for (const coinId in coins) {
+            let fieldsHTML = `<p class="text-sm font-bold text-text-secondary">${coins[coinId].name}</p>`;
+            for (let i = 0; i < 4; i++) {
+                const rate = coins[coinId].tiers[i]?.rate || 0;
+                fieldsHTML += `
+                    <div>
+                        <label for="admin-${coinId}-rate-${i}" class="block text-sm mb-1">${tierLabels[i]}</label>
+                        <input id="admin-${coinId}-rate-${i}" type="number" step="0.01" class="form-input w-full rounded-lg text-white border-slate-700 bg-background h-12 p-3" value="${rate}" required>
+                    </div>`;
+            }
+            container.insertAdjacentHTML('beforeend', `<div class="space-y-3">${fieldsHTML}</div><hr class="border-slate-700 !my-4">`);
+        }
+    }
+
+    function loadAdminData() {
+        const container = $('#admin-requests-container');
+        db.ref('requests').on('value', (snapshot) => {
+            container.innerHTML = ''; const data = snapshot.val(); if (!data) { container.innerHTML = '<p class="text-center text-text-secondary">No requests found.</p>'; return; }
+            const allRequests = Object.values(data).sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate));
+            allRequests.forEach(request => {
+                const date = new Date(request.requestDate).toLocaleString('en-GB'); let mediaHTML = '<div class="flex flex-wrap gap-2 mt-2">';
+                if (request.proofVideoData) { mediaHTML += `<video ${request.proofVideoThumbnail ? `poster="${request.proofVideoThumbnail}"` : ''} src="${request.proofVideoData}" class="admin-media w-28 h-20 object-cover rounded-md cursor-pointer bg-slate-800" data-type="video"></video>`; }
+                mediaHTML += '</div>';
+                let details = `<b>Amount:</b> ${request.amount} ${request.type.toUpperCase()}<br>`;
+                if (request.type === 'top-coin') { details += `<b class="block mt-1">Coupon:</b><p class="text-xs break-all bg-background p-2 rounded-md">${request.couponCode || 'N/A'}</p>`; } else { details += mediaHTML; }
+                const actionButtons = request.status === 'Processing' ? `<button class="approve-btn flex-1 bg-green-500/20 text-green-400 text-sm font-bold py-1.5 rounded" data-id="${request.id}">Approve</button><button class="reject-btn flex-1 bg-red-500/20 text-red-400 text-sm font-bold py-1.5 rounded" data-id="${request.id}">Reject</button>` : '';
+                container.insertAdjacentHTML('beforeend', `<div class="bg-background p-3 rounded-lg border border-slate-800"><p class="font-bold">${request.userName} (${request.telegramId})</p><p class="text-xs text-text-secondary">${date}</p><div class="text-sm my-2">${details}</div><p class="text-sm"><b>Payment:</b> ${request.paymentMethod} - ${request.paymentNumber}</p><p class="text-sm"><b>Status:</b> ${request.status}</p><div class="flex gap-2 mt-3">${actionButtons}<button class="remove-request-btn bg-zinc-600/20 text-zinc-400 text-sm font-bold py-1.5 px-3 rounded" data-id="${request.id}">Clear</button></div></div>`);
+            });
+            $$('.approve-btn').forEach(btn => btn.onclick = () => updateRequestStatus(btn.dataset.id, 'Completed'));
+            $$('.reject-btn').forEach(btn => btn.onclick = () => updateRequestStatus(btn.dataset.id, 'Rejected'));
+            $$('.remove-request-btn').forEach(btn => btn.onclick = () => removeRequest(btn.dataset.id));
+            $$('.admin-media').forEach(media => media.onclick = (e) => showMediaInModal(e.target.src, e.target.dataset.type));
+        });
+    }
+
+    function showMediaInModal(src, type) { const modal = $('#media-modal'), imgEl = $('#modal-image'), videoEl = $('#modal-video'); if (type === 'video') { imgEl.classList.add('hidden'); videoEl.classList.remove('hidden'); videoEl.src = src; videoEl.play(); } else { videoEl.classList.add('hidden'); imgEl.classList.remove('hidden'); imgEl.src = src; } modal.classList.remove('hidden'); }
+    function hideMediaModal() { const modal = $('#media-modal'), videoEl = $('#modal-video'); videoEl.pause(); videoEl.src = ''; modal.classList.add('hidden'); }
+    function removeRequest(id) { tg.showConfirm('Are you sure you want to remove this request permanently?', (confirmed) => { if (confirmed) { showLoader('Removing...'); db.ref(`requests/${id}`).remove().then(() => tg.showAlert('Request removed.')).catch(err => tg.showAlert(`Failed to remove: ${err.message}`)).finally(hideLoader); } }); }
+    function updateRequestStatus(id, status) { showLoader(); db.ref(`requests/${id}/status`).set(status).then(() => tg.showAlert(`Request has been ${status.toLowerCase()}.`)).catch(err => tg.showAlert(`Failed to update status: ${err.message}`)).finally(hideLoader); }
+
+    startApp();
+});
+</script>
+</body>
+</html>
