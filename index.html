@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDK (Only used for Settings/Rates now) -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
@@ -46,13 +46,7 @@
 
   <div id="loading-overlay" class="loading-overlay hidden"><div class="loader"></div><p id="loader-text"></p></div>
   <div id="error-container" class="hidden flex items-center justify-center min-h-screen p-4 text-center"><p>This app can only be used inside Telegram.</p></div>
-  <div id="media-modal" class="hidden fixed inset-0 z-[10000] flex items-center justify-center p-4">
-    <div class="absolute inset-0" id="modal-backdrop"></div>
-    <span id="close-modal" class="absolute top-4 right-4 text-white text-4xl cursor-pointer z-10">&times;</span>
-    <img id="modal-image" src="" alt="Full size media" class="hidden max-w-full max-h-full z-20 rounded-lg">
-    <video id="modal-video" src="" controls autoplay class="hidden max-w-full max-h-full z-20 rounded-lg"></video>
-  </div>
-
+  
   <!-- System Offline Notice Page -->
   <main id="page-system-off" class="page min-h-screen flex flex-col items-center justify-center p-6 text-center">
       <div class="w-full max-w-md">
@@ -76,9 +70,15 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-        <div><div class="flex flex-col rounded-lg bg-card-background p-4"><div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center"><span class="material-symbols-outlined text-primary text-lg">toll</span></div><p>Niva Coin Sales</p></div><div class="flex items-end justify-between"><div class="flex flex-col"><p id="dashboard-niva-requests" class="text-sm text-text-secondary">...</p><p id="dashboard-niva-total" class="text-sm text-text-secondary">...</p></div><button class="nav-btn-internal flex items-center justify-center rounded-md h-8 px-3 bg-card-background text-primary border border-primary text-xs font-medium" data-page="page-history">View</button></div></div></div>
-        <div><div class="flex flex-col rounded-lg bg-card-background p-4"><div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center"><span class="text-primary font-bold text-xl">F</span></div><p>Fira Coin Sales</p></div><div class="flex items-end justify-between"><div class="flex flex-col"><p id="dashboard-fira-requests" class="text-sm text-text-secondary">...</p><p id="dashboard-fira-total" class="text-sm text-text-secondary">...</p></div><button class="nav-btn-internal flex items-center justify-center rounded-md h-8 px-3 bg-card-background text-primary border border-primary text-xs font-medium" data-page="page-history">View</button></div></div></div>
         <div class="col-span-1 md:col-span-2"><div class="flex flex-col rounded-lg bg-card-background p-4"><div class="flex justify-between mb-2"><p>Market Rates</p><p class="text-xs font-bold text-red-500">Live</p></div><div class="flex flex-col gap-1"><p class="text-sm">Fira Coin: <span id="dashboard-fira-rate" class="text-primary font-bold">...</span></p></div></div></div>
+        
+        <!-- Info Card -->
+        <div class="col-span-1 md:col-span-2">
+            <div class="bg-blue-900/30 border border-blue-600/50 p-4 rounded-xl">
+                <h3 class="font-bold text-blue-400 mb-1">How it works</h3>
+                <p class="text-sm text-blue-200">When you submit a sell request, it is directly sent to our official channel for processing. No data is stored in the app history.</p>
+            </div>
+        </div>
       </div>
       <a href="https://t.me/earno_vate_earn" target="_blank" class="fixed bottom-24 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-1.37.2-1.64l16.43-6.2c.75-.28 1.45.27 1.23 1.22l-2.67 12.3c-.22.99-1.21 1.22-1.87.73l-4.11-3.4-1.98 1.9z"></path></svg></a>
     </main>
@@ -150,9 +150,6 @@
             </form>
         </div>
     </main>
-
-    <!-- History Page -->
-    <main id="page-history" class="page flex-1 pb-28"><header class="py-4 px-4"><h1 class="text-lg font-bold text-center">My Sell Requests</h1></header><div id="history-list-container" class="px-4 pt-2 space-y-3"><div class="text-center text-text-secondary">Loading history...</div></div></main>
     
     <!-- Profile Page -->
     <main id="page-profile" class="page flex-1 p-4 pb-28">
@@ -166,6 +163,7 @@
           <h2 class="px-2 mb-3 text-sm font-semibold uppercase text-text-secondary">Admin Panel</h2>
           <div class="bg-card-background rounded-xl p-4 space-y-4">
             <h3 class="font-bold">Update Settings</h3>
+            <p class="text-xs text-text-secondary">User requests are now sent directly to the Telegram Channel.</p>
             <form id="update-rates-form" class="space-y-4">
               <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">Main System Status</legend><div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><span id="system-status-icon" class="material-symbols-outlined"></span><span id="system-status-text"></span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="admin-system-status-toggle" class="sr-only peer"><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div><div><label for="admin-system-notice" class="block text-sm mb-1 mt-2">System Offline Notice</label><textarea id="admin-system-notice" rows="4" class="form-input w-full rounded-lg text-white border-slate-700 bg-background p-3" placeholder="Enter the notice to show users when the system is offline."></textarea></div></fieldset>
               <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">Coin System Status</legend>
@@ -179,7 +177,6 @@
               <button type="submit" class="w-full bg-primary text-background font-bold py-2.5 px-4 rounded-lg !mt-6">Update Settings</button>
             </form>
           </div>
-          <div class="mt-6"><h3 class="font-bold mb-3 px-2">All Sell Requests</h3><div id="admin-requests-container" class="space-y-3"><p class="text-center text-text-secondary">Loading requests...</p></div></div>
         </section>
         <section class="flex w-full items-center justify-between gap-4 rounded-xl bg-blue-900/50 p-4 border border-blue-700"><div class="flex items-center gap-4"><div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white"><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-1.37.2-1.64l16.43-6.2c.75-.28 1.45.27 1.23 1.22l-2.67 12.3c-.22.99-1.21 1.22-1.87.73l-4.11-3.4-1.98 1.9z"></path></svg></div><div><p class="font-bold text-white">Join Our Telegram</p><p class="text-sm text-blue-200">For news & updates</p></div></div><a href="https://t.me/earno_vate_earn" target="_blank" class="flex h-10 shrink-0 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-bold text-white">Join</a></section>
         <div class="bg-blue-900/50 border border-blue-700 text-blue-300 text-sm rounded-lg p-3 text-center">সেল করার পূর্বে টেলিগ্রামের বিস্তারিত দেখে নিবেন</div>
@@ -194,10 +191,9 @@
 
     <!-- Bottom Navigation -->
     <div class="fixed bottom-0 left-0 right-0 h-20 bg-card-background/90 backdrop-blur-sm border-t border-text-secondary/10">
-      <div class="grid h-full max-w-lg grid-cols-4 mx-auto">
+      <div class="grid h-full max-w-lg grid-cols-3 mx-auto">
         <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-dashboard" data-nav="dashboard"><span class="material-symbols-outlined text-2xl mb-1">dashboard</span><span class="text-xs">Dashboard</span></button>
         <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-dashboard" data-nav="sell"><span class="material-symbols-outlined text-2xl mb-1">add_circle</span><span class="text-xs">Sell</span></button>
-        <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-history" data-nav="history"><span class="material-symbols-outlined text-2xl mb-1">history</span><span class="text-xs">History</span></button>
         <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-profile" data-nav="profile"><span class="material-symbols-outlined text-2xl mb-1">person</span><span class="text-xs">Profile</span></button>
       </div>
     </div>
@@ -205,8 +201,14 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Configuration ---
     const ADMIN_TELEGRAM_ID = '6703675335';
-    const MAX_FILE_SIZE_MB = 8;
+    // Telegram Bot Integration Details
+    const BOT_TOKEN = '8523876681:AAHJ3AGjdB7KpiHvrjMvq3clD5csFrVlt24';
+    // Prefixing -100 for Channel ID is standard for Telegram API
+    const CHANNEL_ID = '-1002536173839'; 
+
+    const MAX_FILE_SIZE_MB = 20; // Increased limit for direct Telegram upload
     const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => document.querySelectorAll(selector);
@@ -223,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let tg; 
     let marketRates = {};
 
+    // Firebase is only used for Rates and Settings now
     const firebaseConfig = {
         apiKey: "AIzaSyCAQtTRKgOizQjgqCbIZ_Z357LQD2Woee8",
         authDomain: "earnovate-bot.firebaseapp.com",
@@ -317,9 +320,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         $('#top-coin-amount-input').addEventListener('input', () => calculatePayout('top-coin'));
         $('#sell-top-coin-form').addEventListener('submit', (e) => handleCoinSubmit(e, 'top-coin'));
-
-        $('#close-modal').addEventListener('click', hideMediaModal);
-        $('#modal-backdrop').addEventListener('click', hideMediaModal);
         
         if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
             $('#update-rates-form').addEventListener('submit', handleSettingsUpdate);
@@ -355,9 +355,10 @@ document.addEventListener('DOMContentLoaded', () => {
         $(`#${coinType}-payout-text`).textContent = `You will receive: ~৳${payout} (Rate: ৳${selectedRate}/k)`;
     }
     
-    const fileToBase64 = file => new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); });
+    // Generate simple thumbnail for preview only
     const generateVideoThumbnail = file => new Promise((resolve, reject) => { const video = document.createElement('video'), canvas = document.createElement('canvas'), context = canvas.getContext('2d'), url = URL.createObjectURL(file); video.onloadedmetadata = () => { video.width = video.videoWidth; video.height = video.videoHeight; canvas.width = video.videoWidth; canvas.height = video.videoHeight; video.currentTime = 0; }; video.onseeked = () => { if (!context) return reject('Canvas context is not available'); context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight); URL.revokeObjectURL(url); resolve(canvas.toDataURL('image/jpeg', 0.8)); }; video.onerror = (err) => { URL.revokeObjectURL(url); reject(`Error loading video: ${err}`); }; video.src = url; video.load(); });
 
+    // --- MAIN SUBMISSION LOGIC (DIRECT TO TELEGRAM) ---
     async function handleCoinSubmit(e, coinType) {
         e.preventDefault();
         try {
@@ -367,30 +368,67 @@ document.addEventListener('DOMContentLoaded', () => {
             const paymentMethod = form[paymentMethodName].value;
             const paymentNumber = $(`#${coinType}-payment-number`).value;
 
-            const payload = createPayload(paymentMethod, paymentNumber);
-            payload.type = `${coinType}`;
-            payload.amount = amount;
+            // Construct the Message
+            let message = `
+🚀 *New Sell Request (${coinType.toUpperCase().replace('-', ' ')})*
 
-            if (coinType === 'niva' || coinType === 'fira') {
-                const file = $(`#${coinType}-file-input`).files[0];
-                if (!file) throw new Error("Please upload a screen recording.");
-                if (file.size > MAX_FILE_SIZE_BYTES) throw new Error(`Video too large. Max size: ${MAX_FILE_SIZE_MB} MB.`);
-                showLoader('Generating thumbnail...');
-                payload.proofVideoThumbnail = await generateVideoThumbnail(file);
-                showLoader('Encoding video...');
-                payload.proofVideoData = await fileToBase64(file);
-            } else if (coinType === 'top-coin') {
-                payload.couponCode = $(`#top-coin-coupon-input`).value;
-                if (!payload.couponCode.trim()) throw new Error("Please enter a coupon code.");
+👤 *User:* ${telegramUser.first_name || 'Unknown'} (ID: \`${telegramUser.id}\`)
+💰 *Amount:* ${amount}
+💳 *Method:* ${paymentMethod}
+📱 *Number:* \`${paymentNumber}\`
+📅 *Date:* ${new Date().toLocaleString()}
+`;
+            if (coinType === 'top-coin') {
+                 const coupon = $(`#top-coin-coupon-input`).value;
+                 message += `\n🎟 *Coupon:* \`${coupon}\``;
+                 if(!coupon.trim()) throw new Error("Coupon code is required");
             }
 
-            showLoader('Submitting...');
-            await db.ref(`requests/${payload.id}`).set(payload);
-            tg.showAlert('Request submitted successfully!');
+            let file = null;
+            if (coinType === 'niva' || coinType === 'fira') {
+                file = $(`#${coinType}-file-input`).files[0];
+                if (!file) throw new Error("Please upload a screen recording.");
+                if (file.size > MAX_FILE_SIZE_BYTES) throw new Error(`Video too large. Max size: ${MAX_FILE_SIZE_MB} MB.`);
+            }
+
+            showLoader('Sending to Channel...');
+
+            // Send to Telegram Bot API
+            const formData = new FormData();
+            formData.append('chat_id', CHANNEL_ID);
+            formData.append('parse_mode', 'Markdown');
+            
+            let apiEndpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+            if (file) {
+                // Send Video
+                apiEndpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`;
+                formData.append('video', file);
+                formData.append('caption', message);
+            } else {
+                // Send Text Only
+                formData.append('text', message);
+            }
+
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!result.ok) {
+                console.error("Telegram API Error:", result);
+                throw new Error(result.description || "Failed to send to Telegram.");
+            }
+
+            tg.showAlert('Request submitted successfully to the channel!');
             form.reset();
             if (coinType === 'niva' || coinType === 'fira') $(`#remove-${coinType}-video-btn`).click();
-            showPage('page-history');
+            showPage('page-dashboard');
+
         } catch (err) {
+            console.error(err);
             tg.showAlert(`Submission Failed: ${err.message}`);
         } finally { hideLoader(); }
     }
@@ -455,11 +493,6 @@ document.addEventListener('DOMContentLoaded', () => {
         removeBtn.addEventListener('click', (e) => { e.preventDefault(); if (videoPreview.src.startsWith('blob:')) URL.revokeObjectURL(videoPreview.src); fileInput.value = null; videoPreview.src = '#'; videoPreview.poster = ''; uploadPrompt.classList.remove('hidden'); previewContainer.classList.add('hidden'); removeBtn.classList.add('hidden'); });
     }
 
-    function createPayload(paymentMethod, paymentNumber) {
-        const newRequestRef = db.ref('requests').push();
-        return { id: newRequestRef.key, telegramId: telegramUser.id.toString(), userName: telegramUser.first_name || 'User', status: 'Processing', requestDate: new Date().toISOString(), paymentMethod, paymentNumber };
-    }
-
     function showPage(pageId) {
         if (!pageId) return;
         $$(".page").forEach(page => page.classList.remove("active"));
@@ -471,9 +504,17 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (pageId === 'page-history') activeNav = 'history';
         else if (pageId === 'page-profile' || pageId === 'page-terms') activeNav = 'profile';
         $$(".nav-btn").forEach(btn => { const nav = btn.dataset.nav; const isActive = (nav === 'sell' && activeNav === 'sell') || (nav !== 'sell' && nav === activeNav); btn.classList.toggle("text-primary", isActive); btn.classList.toggle("text-text-secondary", !isActive); });
-        loadDashboardData();
-        if (pageId === "page-history") loadHistoryData();
-        if (pageId === "page-profile" && telegramUser.id.toString() === ADMIN_TELEGRAM_ID) loadAdminData();
+        
+        // No loading dashboard data (requests) since we don't store them anymore
+        if (pageId === "page-profile" && telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
+             // Just ensures rates are loaded for admin form
+             const rates = marketRates; 
+             if(rates.transferIds) {
+                $('#admin-niva-transfer-id').value = rates.transferIds.niva || '';
+                $('#admin-fira-transfer-id').value = rates.transferIds.fira || '';
+                populateAdminRates(rates.coinRates);
+             }
+        }
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -558,31 +599,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    async function loadHistoryData() {
-        const container = $("#history-list-container"); container.innerHTML = '<div class="text-center text-text-secondary">Loading history...</div>';
-        try {
-            const snapshot = await db.ref('requests').orderByChild('telegramId').equalTo(telegramUser.id.toString()).once('value');
-            const data = snapshot.val(); if (!data) { container.innerHTML = '<p class="text-center text-text-secondary">No requests found.</p>'; return; }
-            const userRequests = Object.values(data).sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate)); container.innerHTML = "";
-            userRequests.forEach(req => {
-                let iconContent = '', title = `${(req.amount || 0).toLocaleString()} ${req.type.split('-')[0].toUpperCase()}`;
-                if (req.type === 'niva') iconContent = `<span class="material-symbols-outlined text-primary text-2xl">toll</span>`;
-                else if (req.type === 'fira') iconContent = `<span class="text-primary font-bold text-2xl">F</span>`;
-                else if (req.type === 'top-coin') iconContent = `<span class="material-symbols-outlined text-primary text-2xl">workspace_premium</span>`; else return;
-                const date = new Date(req.requestDate).toLocaleDateString("en-GB"); let statusColor = req.status === "Completed" ? "green" : req.status === "Rejected" ? "red" : "orange";
-                container.insertAdjacentHTML("beforeend", `<div class="flex items-center gap-4 bg-card-background p-3 rounded-xl"><div class="flex items-center justify-center rounded-lg bg-primary/20 shrink-0 w-12 h-12">${iconContent}</div><div class="flex-1 min-w-0"><p class="font-medium truncate">${title}</p><p class="text-zinc-400 text-sm">${date}</p></div><div class="shrink-0"><div class="rounded-full px-3 py-1 bg-${statusColor}-400/20 text-${statusColor}-400"><p class="text-xs font-semibold">${req.status}</p></div></div></div>`);
-            });
-        } catch (e) { container.innerHTML = '<p class="text-center text-red-400">Could not load history.</p>'; }
-    }
-
-    async function loadDashboardData() {
-        if(!$("#dashboard-niva-requests")) return;
-        const snapshot = await db.ref('requests').orderByChild('telegramId').equalTo(telegramUser.id.toString()).once('value');
-        const data = snapshot.val(); let nivaRequests = 0, nivaTotal = 0, firaRequests = 0, firaTotal = 0;
-        if (data) { Object.values(data).forEach(req => { if (req.type === "niva") { nivaRequests++; nivaTotal += Number(req.amount || 0); } else if (req.type === "fira") { firaRequests++; firaTotal += Number(req.amount || 0); } }); }
-        $("#dashboard-niva-requests").textContent = `${nivaRequests} Requests`; $("#dashboard-niva-total").textContent = `${nivaTotal.toLocaleString()} Coins`; $("#dashboard-fira-requests").textContent = `${firaRequests} Requests`; $("#dashboard-fira-total").textContent = `${firaTotal.toLocaleString()} Coins`;
-    }
-    
     function populateAdminRates(coinRates) {
         const container = $('#admin-coin-rates-container');
         container.innerHTML = '';
@@ -607,32 +623,6 @@ document.addEventListener('DOMContentLoaded', () => {
             container.insertAdjacentHTML('beforeend', `<div class="space-y-3">${fieldsHTML}</div><hr class="border-slate-700 !my-4">`);
         }
     }
-
-    function loadAdminData() {
-        const container = $('#admin-requests-container');
-        db.ref('requests').on('value', (snapshot) => {
-            container.innerHTML = ''; const data = snapshot.val(); if (!data) { container.innerHTML = '<p class="text-center text-text-secondary">No requests found.</p>'; return; }
-            const allRequests = Object.values(data).sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate));
-            allRequests.forEach(request => {
-                const date = new Date(request.requestDate).toLocaleString('en-GB'); let mediaHTML = '<div class="flex flex-wrap gap-2 mt-2">';
-                if (request.proofVideoData) { mediaHTML += `<video ${request.proofVideoThumbnail ? `poster="${request.proofVideoThumbnail}"` : ''} src="${request.proofVideoData}" class="admin-media w-28 h-20 object-cover rounded-md cursor-pointer bg-slate-800" data-type="video"></video>`; }
-                mediaHTML += '</div>';
-                let details = `<b>Amount:</b> ${request.amount} ${request.type.toUpperCase()}<br>`;
-                if (request.type === 'top-coin') { details += `<b class="block mt-1">Coupon:</b><p class="text-xs break-all bg-background p-2 rounded-md">${request.couponCode || 'N/A'}</p>`; } else { details += mediaHTML; }
-                const actionButtons = request.status === 'Processing' ? `<button class="approve-btn flex-1 bg-green-500/20 text-green-400 text-sm font-bold py-1.5 rounded" data-id="${request.id}">Approve</button><button class="reject-btn flex-1 bg-red-500/20 text-red-400 text-sm font-bold py-1.5 rounded" data-id="${request.id}">Reject</button>` : '';
-                container.insertAdjacentHTML('beforeend', `<div class="bg-background p-3 rounded-lg border border-slate-800"><p class="font-bold">${request.userName} (${request.telegramId})</p><p class="text-xs text-text-secondary">${date}</p><div class="text-sm my-2">${details}</div><p class="text-sm"><b>Payment:</b> ${request.paymentMethod} - ${request.paymentNumber}</p><p class="text-sm"><b>Status:</b> ${request.status}</p><div class="flex gap-2 mt-3">${actionButtons}<button class="remove-request-btn bg-zinc-600/20 text-zinc-400 text-sm font-bold py-1.5 px-3 rounded" data-id="${request.id}">Clear</button></div></div>`);
-            });
-            $$('.approve-btn').forEach(btn => btn.onclick = () => updateRequestStatus(btn.dataset.id, 'Completed'));
-            $$('.reject-btn').forEach(btn => btn.onclick = () => updateRequestStatus(btn.dataset.id, 'Rejected'));
-            $$('.remove-request-btn').forEach(btn => btn.onclick = () => removeRequest(btn.dataset.id));
-            $$('.admin-media').forEach(media => media.onclick = (e) => showMediaInModal(e.target.src, e.target.dataset.type));
-        });
-    }
-
-    function showMediaInModal(src, type) { const modal = $('#media-modal'), imgEl = $('#modal-image'), videoEl = $('#modal-video'); if (type === 'video') { imgEl.classList.add('hidden'); videoEl.classList.remove('hidden'); videoEl.src = src; videoEl.play(); } else { videoEl.classList.add('hidden'); imgEl.classList.remove('hidden'); imgEl.src = src; } modal.classList.remove('hidden'); }
-    function hideMediaModal() { const modal = $('#media-modal'), videoEl = $('#modal-video'); videoEl.pause(); videoEl.src = ''; modal.classList.add('hidden'); }
-    function removeRequest(id) { tg.showConfirm('Are you sure you want to remove this request permanently?', (confirmed) => { if (confirmed) { showLoader('Removing...'); db.ref(`requests/${id}`).remove().then(() => tg.showAlert('Request removed.')).catch(err => tg.showAlert(`Failed to remove: ${err.message}`)).finally(hideLoader); } }); }
-    function updateRequestStatus(id, status) { showLoader(); db.ref(`requests/${id}/status`).set(status).then(() => tg.showAlert(`Request has been ${status.toLowerCase()}.`)).catch(err => tg.showAlert(`Failed to update status: ${err.message}`)).finally(hideLoader); }
 
     startApp();
 });
