@@ -14,7 +14,22 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
   <style type="text/tailwindcss">
-    body { font-family: 'Inter', sans-serif; } .page { display: none; } .page.active { display: block; } .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #00D27F; width: 40px; height: 40px; animation: spin 1s linear infinite; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } .loading-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); display:flex; flex-direction: column; justify-content:center; align-items:center; z-index:9999; } .loading-overlay p { color: white; margin-top: 10px; font-size: 0.9rem; } .hidden { display: none !important; } .payment-method-label { border: 2px solid #4A4A4A; transition: all 0.2s ease-in-out; } .payment-method-radio:checked + .payment-method-label { border-color: #00D27F; background-color: #00D27F20; }
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    
+    /* Animations */
+    .page { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
+    .page.active { display: block; opacity: 1; transform: translateY(0); }
+    
+    .btn-press { transition: transform 0.1s ease; }
+    .btn-press:active { transform: scale(0.96); }
+    
+    .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #00D27F; width: 40px; height: 40px; animation: spin 1s linear infinite; } 
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } 
+    
+    .loading-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display:flex; flex-direction: column; justify-content:center; align-items:center; z-index:9999; } 
+    
+    .payment-method-label { border: 2px solid #4A4A4A; transition: all 0.2s ease-in-out; } 
+    .payment-method-radio:checked + .payment-method-label { border-color: #00D27F; background-color: rgba(0, 210, 127, 0.15); box-shadow: 0 0 0 2px rgba(0, 210, 127, 0.2); }
     
     /* Battery Design for T&C */
     .battery-container { position: relative; padding-top: 2rem; }
@@ -25,18 +40,14 @@
     html.light .bg-background { background-color: #f0f2f5; }
     html.light .text-text-primary { color: #050505; }
     html.light .text-text-secondary { color: #65676B; }
-    html.light .bg-card-background { background-color: #ffffff; }
+    html.light .bg-card-background { background-color: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
     html.light .border-slate-700 { border-color: #ced0d4; }
-    html.light .border-text-secondary\/10 { border-color: rgba(101, 103, 107, 0.2); }
-    html.light .bg-card-background\/90 { background-color: rgba(255, 255, 255, 0.9); }
-    html.light .form-input { color: #050505; background-color: #f0f2f5; border-color: #ced0d4; }
-    html.light .form-input::placeholder { color: #8a8d91; }
+    html.light .form-input { color: #050505; background-color: #ffffff; border-color: #ced0d4; }
+    html.light .form-input:focus { border-color: #00D27F; ring-color: #00D27F; }
     html.light .nav-btn.text-text-secondary { color: #65676B; }
-    html.light .payment-method-label { border-color: #ced0d4; }
-    html.light .text-white { color: #050505; }
+    html.light .payment-method-label { border-color: #ced0d4; background-color: #ffffff; }
     html.light .text-slate-300 { color: #65676B; }
     html.light .text-slate-400 { color: #8a8d91; }
-    html.light .border-slate-800 { border-color: #e0e0e0; }
     html.light .battery-container::before { background-color: #ced0d4; }
 
     /* --- Dark Mode --- */
@@ -44,10 +55,9 @@
     html.dark .bg-background { background-color: #000000; }
     html.dark .text-text-primary { color: #FFFFFF; }
     html.dark .text-text-secondary { color: #A0A0A0; }
-    html.dark .bg-card-background { background-color: #1A1A1A; }
+    html.dark .bg-card-background { background-color: #1A1A1A; border: 1px solid #333; }
     html.dark .border-slate-700 { border-color: #334155; }
     html.dark .form-input { color: #FFFFFF; background-color: #1A1A1A; border-color: #334155; }
-    html.dark .text-white { color: #FFFFFF; }
     html.dark .text-slate-300 { color: #cbd5e1; }
     html.dark .text-slate-400 { color: #94a3b8; }
   </style>
@@ -55,13 +65,13 @@
 </head>
 <body class="bg-background font-display text-text-primary antialiased">
 
-  <div id="loading-overlay" class="loading-overlay hidden"><div class="loader"></div><p id="loader-text"></p></div>
+  <div id="loading-overlay" class="loading-overlay hidden"><div class="loader"></div><p id="loader-text" class="text-white mt-3 font-medium tracking-wide">Processing...</p></div>
   <div id="error-container" class="hidden flex items-center justify-center min-h-screen p-4 text-center"><p>This app can only be used inside Telegram.</p></div>
   
   <!-- System Offline Notice Page -->
   <main id="page-system-off" class="page min-h-screen flex flex-col items-center justify-center p-6 text-center">
       <div class="w-full max-w-md">
-          <div class="flex justify-center mb-6"><span class="material-symbols-outlined text-7xl text-primary">hourglass_top</span></div>
+          <div class="flex justify-center mb-6"><span class="material-symbols-outlined text-7xl text-primary animate-pulse">hourglass_top</span></div>
           <h1 class="text-2xl font-bold text-text-primary mb-3">Service Temporarily Unavailable</h1>
           <div id="system-off-notice-content" class="text-text-secondary leading-relaxed"><p>Loading notice...</p></div>
       </div>
@@ -73,20 +83,20 @@
       <div class="flex items-center p-4"><h2 class="text-xl font-bold flex-1 text-text-secondary">Dashboard</h2><div class="flex size-10 shrink-0 items-center justify-end"><img class="user-profile-pic object-cover rounded-full size-10 border-2 border-primary" src="logo19.jpg" alt="User Avatar"></div></div>
       <h1 id="welcome-message" class="text-3xl font-bold px-4 pb-4 pt-4">Welcome!</h1>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-2">
-        <button data-page="page-sell-niva" class="nav-btn-internal flex w-full items-center justify-center rounded-lg h-14 bg-emerald-500 text-white font-bold gap-3 px-4"> <img src="./niva.jpg" class="h-8 w-8 rounded-full" alt="Niva"> <span>Sell Niva</span> </button>
-        <button data-page="page-sell-ns" class="nav-btn-internal flex w-full items-center justify-center rounded-lg h-14 bg-purple-500 text-white font-bold gap-3 px-4"> <img src="./ns.jpg" class="h-8 w-8 rounded-full" alt="Ns Coin"> <span>Sell Ns Coin</span> </button>
-        <button data-page="page-sell-fira" class="nav-btn-internal flex w-full items-center justify-center rounded-lg h-14 bg-amber-500 text-white font-bold gap-3 px-4"> <img src="./fira.jpg" class="h-8 w-8 rounded-full" alt="Fira"> <span>Sell Fira</span> </button>
-        <button data-page="page-sell-top-coin" class="nav-btn-internal flex w-full items-center justify-center rounded-lg h-14 bg-sky-500 text-white font-bold gap-3 px-4"> <img src="./top.jpg" class="h-8 w-8 rounded-full" alt="Top"> <span>Sell Top Coin</span> </button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 px-4 py-2">
+        <button data-page="page-sell-niva" class="btn-press nav-btn-internal flex w-full items-center justify-center rounded-xl h-16 bg-emerald-500 text-white font-bold gap-3 px-4 shadow-lg shadow-emerald-500/20"> <img src="./niva.jpg" class="h-9 w-9 rounded-full bg-white p-0.5" alt="Niva"> <span>Sell Niva</span> </button>
+        <button data-page="page-sell-ns" class="btn-press nav-btn-internal flex w-full items-center justify-center rounded-xl h-16 bg-purple-500 text-white font-bold gap-3 px-4 shadow-lg shadow-purple-500/20"> <img src="./ns.jpg" class="h-9 w-9 rounded-full bg-white p-0.5" alt="Ns Coin"> <span>Sell Ns Coin</span> </button>
+        <button data-page="page-sell-fira" class="btn-press nav-btn-internal flex w-full items-center justify-center rounded-xl h-16 bg-amber-500 text-white font-bold gap-3 px-4 shadow-lg shadow-amber-500/20"> <img src="./fira.jpg" class="h-9 w-9 rounded-full bg-white p-0.5" alt="Fira"> <span>Sell Fira</span> </button>
+        <button data-page="page-sell-top-coin" class="btn-press nav-btn-internal flex w-full items-center justify-center rounded-xl h-16 bg-sky-500 text-white font-bold gap-3 px-4 shadow-lg shadow-sky-500/20"> <img src="./top.jpg" class="h-9 w-9 rounded-full bg-white p-0.5" alt="Top"> <span>Sell Top Coin</span> </button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
         
-        <!-- NEW NOTICE SECTION -->
+        <!-- NOTICE SECTION (Visibility Fixed for Light/Dark) -->
         <div class="col-span-1 md:col-span-2">
-            <div class="bg-amber-900/30 border border-amber-600/50 p-4 rounded-xl">
-                <h3 class="font-bold text-amber-500 mb-2 flex items-center gap-2"><span class="material-symbols-outlined">campaign</span> Notice</h3>
-                <ul class="text-sm text-amber-400 space-y-2 list-disc list-inside">
+            <div class="bg-amber-50 border border-amber-200 dark:bg-amber-900/30 dark:border-amber-600/50 p-4 rounded-xl shadow-sm">
+                <h3 class="font-bold text-amber-800 dark:text-amber-500 mb-2 flex items-center gap-2"><span class="material-symbols-outlined">campaign</span> Notice</h3>
+                <ul class="text-sm text-amber-900 dark:text-amber-300 space-y-2 list-disc list-inside font-medium">
                     <li>সেন্ড মানি চার্জ 5/- কাটা হবে</li>
                     <li>বড় এমাউন্ট ডিল করতে অ্যাডমিন কে ইনবক্স করবেন</li>
                     <li>প্রতিটা রিকোয়েস্ট ম্যানুয়ালি চেক করা হয় তাই ফেক ডিটেইল দেওয়া থেকে বিরত থাকবেন</li>
@@ -96,13 +106,14 @@
 
         <!-- How it works Card -->
         <div class="col-span-1 md:col-span-2">
-            <div class="bg-blue-900/30 border border-blue-600/50 p-4 rounded-xl">
-                <h3 class="font-bold text-blue-500 mb-1">How it works</h3>
-                <p class="text-sm text-blue-400">When you submit a sell request, This is done by admins through manual verification and payment is made within 15 minutes.</p>
+            <div class="bg-blue-50 border border-blue-200 dark:bg-blue-900/30 dark:border-blue-600/50 p-4 rounded-xl shadow-sm">
+                <h3 class="font-bold text-blue-700 dark:text-blue-500 mb-1">How it works</h3>
+                <p class="text-sm text-blue-800 dark:text-blue-300">When you submit a sell request, it is verified manually by admins. Payment is made within 15 minutes.</p>
             </div>
         </div>
       </div>
-      <a href="https://t.me/earno_vate_earn" target="_blank" class="fixed bottom-24 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg"><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-1.37.2-1.64l16.43-6.2c.75-.28 1.45.27 1.23 1.22l-2.67 12.3c-.22.99-1.21 1.22-1.87.73l-4.11-3.4-1.98 1.9z"></path></svg></a>
+      <!-- Floating Button -->
+      <a href="https://t.me/earno_vate_earn" target="_blank" class="fixed bottom-24 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-xl shadow-primary/30 btn-press"><span class="material-symbols-outlined text-3xl">telegram</span></a>
     </main>
 
     <!-- History Page -->
@@ -116,18 +127,18 @@
     <!-- Sell Niva Page -->
     <main id="page-sell-niva" class="page flex-grow p-4 pb-28">
         <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
-            <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Niva Coin Sales Unavailable</h1><p class="text-text-secondary">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p><button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Dashboard</button></div>
+            <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Niva Coin Sales Unavailable</h1><p class="text-text-secondary">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p><button class="btn-press nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Dashboard</button></div>
         </div>
         <div class="coin-system-content">
-            <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Niva Coin</h1><div class="size-8"></div></header>
-            <div id="niva-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-lg flex items-center gap-4 my-4 transition-transform active:scale-[0.98]"><div class="flex-1"><p class="text-sm text-text-secondary">Transfer to ID</p><p id="niva-transfer-id" class="text-lg font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
-            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Rates</h3><div id="niva-rates-display" class="space-y-1 text-sm text-center">Loading rates...</div></div>
+            <header class="flex items-center py-2 justify-between"><button class="btn-press nav-btn-internal text-text-primary flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Niva Coin</h1><div class="size-8"></div></header>
+            <div id="niva-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-xl flex items-center gap-4 my-4 btn-press border border-slate-700"><div class="flex-1"><p class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Transfer to ID</p><p id="niva-transfer-id" class="text-xl font-mono font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
+            <div class="rounded-xl bg-card-background my-4 p-4 border border-slate-700"><h3 class="text-md font-bold mb-3 text-center text-emerald-500">Current Rates</h3><div id="niva-rates-display" class="space-y-1.5 text-sm text-center font-medium">Loading rates...</div></div>
             <form id="sell-niva-form" class="space-y-6">
-                <div><label class="block mb-2">Sender Username/ID</label><input id="niva-sender-user" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="Enter sender name used in game" type="text"/></div>
-                <div><label class="block mb-2">Amount</label><div class="relative"><input id="niva-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-16" placeholder="Min 10000" type="number"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">NIVA</span></div><p id="niva-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
-                <div><h2 class="text-lg font-bold mb-2">Proof (Video or Screenshot)</h2><div class="relative w-full min-h-[120px] p-6 border-2 border-dashed border-slate-700 rounded-xl bg-card-background"><div id="niva-upload-prompt" class="flex flex-col items-center justify-center text-center cursor-pointer"><span class="material-symbols-outlined text-4xl text-slate-400 mb-2">cloud_upload</span><p>Upload Proof</p></div><div id="niva-preview-container" class="hidden text-center"><p id="niva-file-name" class="text-sm text-primary break-all"></p></div><input id="niva-file-input" required class="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="image/*,video/*"/></div></div>
-                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="niva-bkash" name="paymentMethodNiva" value="Bkash" class="hidden payment-method-radio" required checked><label for="niva-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="niva-nagad" name="paymentMethodNiva" value="Nagad" class="hidden payment-method-radio" required><label for="niva-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block">Payment Number</span><input id="niva-payment-number" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
-                <button type="submit" class="w-full bg-primary text-background font-bold py-3.5 px-6 rounded-lg !mt-8">Submit Sell Order</button>
+                <div><label class="block mb-2 font-medium">Sender Username/ID</label><input id="niva-sender-user" required class="form-input w-full rounded-xl h-14 p-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="Enter sender name used in game" type="text"/></div>
+                <div><label class="block mb-2 font-medium">Amount</label><div class="relative"><input id="niva-amount-input" required class="form-input w-full rounded-xl h-14 p-4 pr-16 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="Min 10000" type="number"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">NIVA</span></div><p id="niva-payout-text" class="text-slate-300 pt-2 text-sm">You will receive: ~৳0.00</p></div>
+                <div><h2 class="text-lg font-bold mb-2">Proof</h2><div class="relative w-full min-h-[120px] p-6 border-2 border-dashed border-slate-700 rounded-xl bg-card-background hover:bg-slate-800/10 transition-colors"><div id="niva-upload-prompt" class="flex flex-col items-center justify-center text-center cursor-pointer"><span class="material-symbols-outlined text-4xl text-slate-400 mb-2">cloud_upload</span><p class="text-sm font-medium">Upload Screenshot/Video</p></div><div id="niva-preview-container" class="hidden text-center"><p id="niva-file-name" class="text-sm text-primary break-all"></p></div><input id="niva-file-input" required class="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="image/*,video/*"/></div></div>
+                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="niva-bkash" name="paymentMethodNiva" value="Bkash" class="hidden payment-method-radio" required checked><label for="niva-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-xl cursor-pointer h-full"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="niva-nagad" name="paymentMethodNiva" value="Nagad" class="hidden payment-method-radio" required><label for="niva-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-xl cursor-pointer h-full"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block font-medium">Payment Number</span><input id="niva-payment-number" required class="form-input w-full rounded-xl h-14 p-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
+                <button type="submit" class="btn-press w-full bg-primary text-black font-extrabold py-4 px-6 rounded-xl !mt-8 shadow-lg shadow-primary/20">CONFIRM ORDER</button>
             </form>
         </div>
     </main>
@@ -135,18 +146,18 @@
     <!-- Sell Ns Coin Page -->
     <main id="page-sell-ns" class="page flex-grow p-4 pb-28">
         <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
-            <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Ns Coin Sales Unavailable</h1><p class="text-text-secondary">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p><button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Dashboard</button></div>
+            <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Ns Coin Sales Unavailable</h1><p class="text-text-secondary">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p><button class="btn-press nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Dashboard</button></div>
         </div>
         <div class="coin-system-content">
-            <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Ns Coin</h1><div class="size-8"></div></header>
-            <div id="ns-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-lg flex items-center gap-4 my-4 transition-transform active:scale-[0.98]"><div class="flex-1"><p class="text-sm text-text-secondary">Transfer to ID</p><p id="ns-transfer-id" class="text-lg font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
-            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Rates</h3><div id="ns-rates-display" class="space-y-1 text-sm text-center">Loading rates...</div></div>
+            <header class="flex items-center py-2 justify-between"><button class="btn-press nav-btn-internal text-text-primary flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Ns Coin</h1><div class="size-8"></div></header>
+            <div id="ns-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-xl flex items-center gap-4 my-4 btn-press border border-slate-700"><div class="flex-1"><p class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Transfer to ID</p><p id="ns-transfer-id" class="text-xl font-mono font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
+            <div class="rounded-xl bg-card-background my-4 p-4 border border-slate-700"><h3 class="text-md font-bold mb-3 text-center text-purple-500">Current Rates</h3><div id="ns-rates-display" class="space-y-1.5 text-sm text-center font-medium">Loading rates...</div></div>
             <form id="sell-ns-form" class="space-y-6">
-                <div><label class="block mb-2">Sender Username/ID</label><input id="ns-sender-user" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="Enter sender name used in game" type="text"/></div>
-                <div><label class="block mb-2">Amount</label><div class="relative"><input id="ns-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-16" placeholder="Min 10000" type="number"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">NS</span></div><p id="ns-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
-                <div><h2 class="text-lg font-bold mb-2">Proof (Video or Screenshot)</h2><div class="relative w-full min-h-[120px] p-6 border-2 border-dashed border-slate-700 rounded-xl bg-card-background"><div id="ns-upload-prompt" class="flex flex-col items-center justify-center text-center cursor-pointer"><span class="material-symbols-outlined text-4xl text-slate-400 mb-2">cloud_upload</span><p>Upload Proof</p></div><div id="ns-preview-container" class="hidden text-center"><p id="ns-file-name" class="text-sm text-primary break-all"></p></div><input id="ns-file-input" required class="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="image/*,video/*"/></div></div>
-                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="ns-bkash" name="paymentMethodNs" value="Bkash" class="hidden payment-method-radio" required checked><label for="ns-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="ns-nagad" name="paymentMethodNs" value="Nagad" class="hidden payment-method-radio" required><label for="ns-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block">Payment Number</span><input id="ns-payment-number" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
-                <button type="submit" class="w-full bg-primary text-background font-bold py-3.5 px-6 rounded-lg !mt-8">Submit Sell Order</button>
+                <div><label class="block mb-2 font-medium">Sender Username/ID</label><input id="ns-sender-user" required class="form-input w-full rounded-xl h-14 p-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="Enter sender name used in game" type="text"/></div>
+                <div><label class="block mb-2 font-medium">Amount</label><div class="relative"><input id="ns-amount-input" required class="form-input w-full rounded-xl h-14 p-4 pr-16 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="Min 10000" type="number"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">NS</span></div><p id="ns-payout-text" class="text-slate-300 pt-2 text-sm">You will receive: ~৳0.00</p></div>
+                <div><h2 class="text-lg font-bold mb-2">Proof</h2><div class="relative w-full min-h-[120px] p-6 border-2 border-dashed border-slate-700 rounded-xl bg-card-background hover:bg-slate-800/10 transition-colors"><div id="ns-upload-prompt" class="flex flex-col items-center justify-center text-center cursor-pointer"><span class="material-symbols-outlined text-4xl text-slate-400 mb-2">cloud_upload</span><p class="text-sm font-medium">Upload Screenshot/Video</p></div><div id="ns-preview-container" class="hidden text-center"><p id="ns-file-name" class="text-sm text-primary break-all"></p></div><input id="ns-file-input" required class="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="image/*,video/*"/></div></div>
+                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="ns-bkash" name="paymentMethodNs" value="Bkash" class="hidden payment-method-radio" required checked><label for="ns-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-xl cursor-pointer h-full"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="ns-nagad" name="paymentMethodNs" value="Nagad" class="hidden payment-method-radio" required><label for="ns-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-xl cursor-pointer h-full"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block font-medium">Payment Number</span><input id="ns-payment-number" required class="form-input w-full rounded-xl h-14 p-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
+                <button type="submit" class="btn-press w-full bg-primary text-black font-extrabold py-4 px-6 rounded-xl !mt-8 shadow-lg shadow-primary/20">CONFIRM ORDER</button>
             </form>
         </div>
     </main>
@@ -154,17 +165,17 @@
     <!-- Sell Fira Page -->
     <main id="page-sell-fira" class="page flex-grow p-4 pb-28">
         <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
-            <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Fira Coin Sales Unavailable</h1><p class="text-text-secondary">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p><button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Dashboard</button></div>
+            <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Fira Coin Sales Unavailable</h1><p class="text-text-secondary">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p><button class="btn-press nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Dashboard</button></div>
         </div>
         <div class="coin-system-content">
-            <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Fira Coin</h1><div class="size-8"></div></header>
-            <div id="fira-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-lg flex items-center gap-4 my-4 transition-transform active:scale-[0.98]"><div class="flex-1"><p class="text-sm text-text-secondary">Transfer to ID</p><p id="fira-transfer-id" class="text-lg font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
-            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Fira Rates</h3><div id="fira-rates-display" class="space-y-2 text-sm text-center">Loading...</div></div>
+            <header class="flex items-center py-2 justify-between"><button class="btn-press nav-btn-internal text-text-primary flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Fira Coin</h1><div class="size-8"></div></header>
+            <div id="fira-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-xl flex items-center gap-4 my-4 btn-press border border-slate-700"><div class="flex-1"><p class="text-xs font-semibold text-text-secondary uppercase tracking-wider">Transfer to ID</p><p id="fira-transfer-id" class="text-xl font-mono font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
+            <div class="rounded-xl bg-card-background my-4 p-4 border border-slate-700"><h3 class="text-md font-bold mb-3 text-center text-amber-500">Current Rates</h3><div id="fira-rates-display" class="space-y-1.5 text-sm text-center font-medium">Loading rates...</div></div>
             <form id="sell-fira-form" class="space-y-6">
-                <div><label class="block mb-2">Amount</label><div class="relative"><input id="fira-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-16" placeholder="e.g., 1000" type="number" step="any"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">FIRA</span></div><p id="fira-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
-                <div><h2 class="text-lg font-bold mb-2">Proof (Video)</h2><div class="relative w-full min-h-[120px] p-6 border-2 border-dashed border-slate-700 rounded-xl bg-card-background"><div id="fira-upload-prompt" class="flex flex-col items-center justify-center text-center cursor-pointer"><span class="material-symbols-outlined text-4xl text-slate-400 mb-2">videocam</span><p>Attach Screen Recording</p></div><div id="fira-preview-container" class="hidden text-center"><p id="fira-file-name" class="text-sm text-primary break-all"></p></div><input id="fira-file-input" required class="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="video/*"/></div></div>
-                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="fira-bkash" name="paymentMethodFira" value="Bkash" class="hidden payment-method-radio" required checked><label for="fira-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="fira-nagad" name="paymentMethodFira" value="Nagad" class="hidden payment-method-radio" required><label for="fira-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block">Payment Number</span><input id="fira-payment-number" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
-                <button type="submit" class="w-full bg-primary text-background font-bold py-3.5 px-6 rounded-lg !mt-8">Submit Sell Order</button>
+                <div><label class="block mb-2 font-medium">Amount</label><div class="relative"><input id="fira-amount-input" required class="form-input w-full rounded-xl h-14 p-4 pr-16 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="e.g., 1000" type="number" step="any"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">FIRA</span></div><p id="fira-payout-text" class="text-slate-300 pt-2 text-sm">You will receive: ~৳0.00</p></div>
+                <div><h2 class="text-lg font-bold mb-2">Proof</h2><div class="relative w-full min-h-[120px] p-6 border-2 border-dashed border-slate-700 rounded-xl bg-card-background hover:bg-slate-800/10 transition-colors"><div id="fira-upload-prompt" class="flex flex-col items-center justify-center text-center cursor-pointer"><span class="material-symbols-outlined text-4xl text-slate-400 mb-2">videocam</span><p class="text-sm font-medium">Attach Screen Recording</p></div><div id="fira-preview-container" class="hidden text-center"><p id="fira-file-name" class="text-sm text-primary break-all"></p></div><input id="fira-file-input" required class="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="video/*"/></div></div>
+                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="fira-bkash" name="paymentMethodFira" value="Bkash" class="hidden payment-method-radio" required checked><label for="fira-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-xl cursor-pointer h-full"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="fira-nagad" name="paymentMethodFira" value="Nagad" class="hidden payment-method-radio" required><label for="fira-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-xl cursor-pointer h-full"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block font-medium">Payment Number</span><input id="fira-payment-number" required class="form-input w-full rounded-xl h-14 p-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
+                <button type="submit" class="btn-press w-full bg-primary text-black font-extrabold py-4 px-6 rounded-xl !mt-8 shadow-lg shadow-primary/20">CONFIRM ORDER</button>
             </form>
         </div>
     </main>
@@ -172,16 +183,16 @@
     <!-- Sell Top Coin Page -->
     <main id="page-sell-top-coin" class="page flex-grow p-4 pb-28">
         <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
-            <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Top Coin Sales Unavailable</h1><p class="text-text-secondary">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p><button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Dashboard</button></div>
+            <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Top Coin Sales Unavailable</h1><p class="text-text-secondary">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p><button class="btn-press nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Dashboard</button></div>
         </div>
         <div class="coin-system-content">
-            <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Top Coin</h1><div class="size-8"></div></header>
-            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Rates</h3><div id="top-coin-rates-display" class="space-y-2 text-sm text-center">Loading...</div></div>
+            <header class="flex items-center py-2 justify-between"><button class="btn-press nav-btn-internal text-text-primary flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Top Coin</h1><div class="size-8"></div></header>
+            <div class="rounded-xl bg-card-background my-4 p-4 border border-slate-700"><h3 class="text-md font-bold mb-3 text-center text-sky-500">Current Rates</h3><div id="top-coin-rates-display" class="space-y-1.5 text-sm text-center font-medium">Loading rates...</div></div>
             <form id="sell-top-coin-form" class="space-y-6">
-                <div><label class="block mb-2">Amount</label><div class="relative"><input id="top-coin-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-24" placeholder="e.g., 1000" type="number" step="any"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">TOP</span></div><p id="top-coin-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
-                <div><label for="top-coin-coupon-input" class="block mb-2 text-lg font-bold">Coupon Code</label><textarea id="top-coin-coupon-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background p-4" placeholder="Paste coupon code" rows="4"></textarea></div>
-                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="top-coin-bkash" name="paymentMethodTopCoin" value="Bkash" class="hidden payment-method-radio" required checked><label for="top-coin-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="top-coin-nagad" name="paymentMethodTopCoin" value="Nagad" class="hidden payment-method-radio" required><label for="top-coin-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block">Payment Number</span><input id="top-coin-payment-number" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
-                <button type="submit" class="w-full bg-primary text-background font-bold py-3.5 px-6 rounded-lg !mt-8">Submit Sell Order</button>
+                <div><label class="block mb-2 font-medium">Amount</label><div class="relative"><input id="top-coin-amount-input" required class="form-input w-full rounded-xl h-14 p-4 pr-24 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="e.g., 1000" type="number" step="any"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">TOP</span></div><p id="top-coin-payout-text" class="text-slate-300 pt-2 text-sm">You will receive: ~৳0.00</p></div>
+                <div><label for="top-coin-coupon-input" class="block mb-2 text-lg font-bold">Coupon Code</label><textarea id="top-coin-coupon-input" required class="form-input w-full rounded-xl p-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="Paste coupon code" rows="4"></textarea></div>
+                <div><h2 class="text-lg font-bold mb-3">Payment Details</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><input type="radio" id="top-coin-bkash" name="paymentMethodTopCoin" value="Bkash" class="hidden payment-method-radio" required checked><label for="top-coin-bkash" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-xl cursor-pointer h-full"><img src="./bkash.jpg" class="h-6" alt="Bkash"><span class="font-semibold">Bkash</span></label></div><div><input type="radio" id="top-coin-nagad" name="paymentMethodTopCoin" value="Nagad" class="hidden payment-method-radio" required><label for="top-coin-nagad" class="payment-method-label flex items-center justify-center gap-2 p-3 rounded-xl cursor-pointer h-full"><img src="./nagad.jpg" class="h-6" alt="Nagad"><span class="font-semibold">Nagad</span></label></div></div><label class="block"><span class="mb-2 block font-medium">Payment Number</span><input id="top-coin-payment-number" required class="form-input w-full rounded-xl h-14 p-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="01XXXXXXXXX" type="tel" pattern="01[0-9]{9}" maxlength="11"/></label></div>
+                <button type="submit" class="btn-press w-full bg-primary text-black font-extrabold py-4 px-6 rounded-xl !mt-8 shadow-lg shadow-primary/20">CONFIRM ORDER</button>
             </form>
         </div>
     </main>
@@ -189,14 +200,27 @@
     <!-- Profile Page -->
     <main id="page-profile" class="page flex-1 p-4 pb-28">
       <h1 class="text-lg font-bold text-center mb-6">Settings</h1>
-      <div class="flex flex-col gap-8">
-        <section class="flex w-full items-center gap-4 rounded-xl bg-card-background p-4"><div class="shrink-0"><img class="user-profile-pic object-cover rounded-full h-16 w-16 border-2 border-primary" src="logo19.jpg" alt="User Avatar"></div><div class="min-w-0"><p id="profile-name" class="text-lg font-bold truncate">...</p><p id="profile-id" class="text-sm text-text-secondary break-all">...</p></div></section>
-        <section><h2 class="px-2 mb-3 text-sm font-semibold uppercase text-text-secondary">App Settings</h2><div class="bg-card-background rounded-xl p-2"><div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><span id="theme-icon" class="material-symbols-outlined">light_mode</span><span>Light Mode</span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="theme-toggle" class="sr-only peer" checked><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div><div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><span class="material-symbols-outlined">description</span><span>Terms & Conditions</span></div><button class="nav-btn-internal text-text-secondary" data-page="page-terms"><span class="material-symbols-outlined">info</span></button></div></div></section>
+      <div class="flex flex-col gap-6">
+        <section class="flex w-full items-center gap-4 rounded-xl bg-card-background p-4 border border-slate-700 shadow-sm"><div class="shrink-0"><img class="user-profile-pic object-cover rounded-full h-16 w-16 border-2 border-primary" src="logo19.jpg" alt="User Avatar"></div><div class="min-w-0"><p id="profile-name" class="text-lg font-bold truncate">...</p><p id="profile-id" class="text-sm text-text-secondary break-all">...</p></div></section>
+        
+        <!-- TELEGRAM NOTICE AND BUTTON -->
+        <section class="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center">
+            <div class="flex flex-col items-center gap-2">
+                <span class="material-symbols-outlined text-3xl text-primary">campaign</span>
+                <p class="text-sm font-semibold text-text-primary mb-2">যে কোন লেনদেনের পূর্বে চ্যানেলে বিস্তারিত দেখে নিন</p>
+                <a href="https://t.me/earno_vate_earn" target="_blank" class="btn-press inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2.5 px-6 rounded-lg text-sm transition-colors shadow-lg shadow-blue-500/30">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-1.37.2-1.64l16.43-6.2c.75-.28 1.45.27 1.23 1.22l-2.67 12.3c-.22.99-1.21 1.22-1.87.73l-4.11-3.4-1.98 1.9z"></path></svg>
+                    Join Telegram Channel
+                </a>
+            </div>
+        </section>
+
+        <section><h2 class="px-2 mb-3 text-sm font-semibold uppercase text-text-secondary">App Settings</h2><div class="bg-card-background rounded-xl p-2 border border-slate-700"><div class="flex items-center justify-between p-3"><div class="flex items-center gap-3"><span id="theme-icon" class="material-symbols-outlined">light_mode</span><span>Light Mode</span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="theme-toggle" class="sr-only peer" checked><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div><div class="h-px bg-slate-700/50 mx-2"></div><div class="flex items-center justify-between p-3"><div class="flex items-center gap-3"><span class="material-symbols-outlined">description</span><span>Terms & Conditions</span></div><button class="nav-btn-internal text-text-secondary" data-page="page-terms"><span class="material-symbols-outlined">chevron_right</span></button></div></div></section>
         
         <!-- Admin Panel Section -->
         <section id="admin-panel" class="hidden">
           <h2 class="px-2 mb-3 text-sm font-semibold uppercase text-text-secondary">Admin Panel</h2>
-          <div class="bg-card-background rounded-xl p-4 space-y-4">
+          <div class="bg-card-background rounded-xl p-4 space-y-4 border border-slate-700">
             <h3 class="font-bold">Update Settings</h3>
             <form id="update-settings-form" class="space-y-4">
               
@@ -214,7 +238,7 @@
               <!-- Transfer IDs -->
               <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">Transfer IDs</legend><div class="space-y-3"><div><label class="block text-sm mb-1">Niva ID</label><input id="admin-niva-transfer-id" type="text" class="form-input w-full rounded-lg h-10 px-3"></div><div><label class="block text-sm mb-1">Ns Coin ID</label><input id="admin-ns-transfer-id" type="text" class="form-input w-full rounded-lg h-10 px-3"></div><div><label class="block text-sm mb-1">Fira ID</label><input id="admin-fira-transfer-id" type="text" class="form-input w-full rounded-lg h-10 px-3"></div></div></fieldset>
               
-              <!-- COIN RATES (PROFESSIONAL SYSTEM) -->
+              <!-- COIN RATES (ALL TIERED NOW) -->
               <fieldset class="border border-slate-700 p-3 rounded-lg">
                   <legend class="px-2 font-semibold text-primary">Coin Rates (Per 1k)</legend>
                   
@@ -238,20 +262,28 @@
                       </div>
                   </div>
 
-                  <!-- Fira & Top -->
-                  <div class="grid grid-cols-2 gap-4">
-                      <div>
-                          <p class="text-sm font-bold text-amber-500 mb-1">Fira (Flat)</p>
-                          <input id="admin-fira-rate" type="number" class="form-input w-full rounded px-2 py-1">
+                  <!-- Fira Rates -->
+                  <div class="mb-4">
+                      <p class="text-sm font-bold text-amber-500 mb-2">Fira Rates</p>
+                      <div class="grid grid-cols-3 gap-2">
+                          <div><label class="text-[10px] text-text-secondary">10k-49k</label><input id="admin-fira-rate-1" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">50k-99k</label><input id="admin-fira-rate-2" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-fira-rate-3" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
                       </div>
-                      <div>
-                          <p class="text-sm font-bold text-sky-500 mb-1">Top (Flat)</p>
-                          <input id="admin-top-rate" type="number" class="form-input w-full rounded px-2 py-1">
+                  </div>
+                  
+                  <!-- Top Coin Rates -->
+                  <div class="mb-2">
+                      <p class="text-sm font-bold text-sky-500 mb-2">Top Coin Rates</p>
+                      <div class="grid grid-cols-3 gap-2">
+                          <div><label class="text-[10px] text-text-secondary">10k-49k</label><input id="admin-top-rate-1" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">50k-99k</label><input id="admin-top-rate-2" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-top-rate-3" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
                       </div>
                   </div>
               </fieldset>
 
-              <button type="submit" class="w-full bg-primary text-background font-bold py-2.5 px-4 rounded-lg">Update All Settings</button>
+              <button type="submit" class="btn-press w-full bg-primary text-black font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-primary/20">Update All Settings</button>
             </form>
           </div>
         </section>
@@ -260,16 +292,16 @@
 
     <!-- Terms & Conditions Page -->
     <main id="page-terms" class="page flex-grow p-4 pb-28">
-      <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-profile"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Terms & Conditions</h1><div class="size-8"></div></header>
+      <header class="flex items-center py-2 justify-between"><button class="btn-press nav-btn-internal text-text-primary flex size-10 items-center justify-center -ml-2" data-page="page-profile"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Terms & Conditions</h1><div class="size-8"></div></header>
       <div class="mt-6"><div class="battery-container bg-card-background p-4 rounded-lg border border-slate-700"><div id="terms-content" class="text-sm text-text-secondary whitespace-pre-wrap">Loading...</div></div></div>
     </main>
 
     <!-- Bottom Navigation -->
-    <div class="fixed bottom-0 left-0 right-0 h-20 bg-card-background/90 backdrop-blur-sm border-t border-text-secondary/10">
+    <div class="fixed bottom-0 left-0 right-0 h-20 bg-card-background/90 backdrop-blur-xl border-t border-slate-700/50 z-40">
       <div class="grid h-full max-w-lg grid-cols-3 mx-auto">
-        <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-dashboard" data-nav="dashboard"><span class="material-symbols-outlined text-2xl mb-1">dashboard</span><span class="text-xs">Dashboard</span></button>
-        <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-history" data-nav="history"><span class="material-symbols-outlined text-2xl mb-1">history</span><span class="text-xs">History</span></button>
-        <button class="nav-btn inline-flex flex-col items-center justify-center px-5" data-page="page-profile" data-nav="profile"><span class="material-symbols-outlined text-2xl mb-1">person</span><span class="text-xs">Profile</span></button>
+        <button class="nav-btn btn-press inline-flex flex-col items-center justify-center px-5" data-page="page-dashboard" data-nav="dashboard"><span class="material-symbols-outlined text-2xl mb-1">dashboard</span><span class="text-xs font-medium">Dashboard</span></button>
+        <button class="nav-btn btn-press inline-flex flex-col items-center justify-center px-5" data-page="page-history" data-nav="history"><span class="material-symbols-outlined text-2xl mb-1">history</span><span class="text-xs font-medium">History</span></button>
+        <button class="nav-btn btn-press inline-flex flex-col items-center justify-center px-5" data-page="page-profile" data-nav="profile"><span class="material-symbols-outlined text-2xl mb-1">person</span><span class="text-xs font-medium">Profile</span></button>
       </div>
     </div>
   </div>
@@ -284,17 +316,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => document.querySelectorAll(selector);
-    const showLoader = (text = '') => { $('#loader-text').textContent = text; $('#loading-overlay').classList.remove('hidden'); };
-    const hideLoader = () => { $('#loader-text').textContent = ''; $('#loading-overlay').classList.add('hidden'); };
+    const showLoader = (text = 'Processing...') => { $('#loader-text').textContent = text; $('#loading-overlay').classList.remove('hidden'); };
+    const hideLoader = () => { $('#loading-overlay').classList.add('hidden'); };
     
     let telegramUser, tg;
-    // Default Global Rates Object
+    // UPDATED: All coins now use tiered structure
     let marketRates = {
         transferIds: { niva: '', ns: '', fira: '' },
         niva: { tier1: 10, tier2: 15, tier3: 20 },
         ns: { tier1: 10, tier2: 15, tier3: 20 },
-        fira: 15,
-        'top-coin': 10
+        fira: { tier1: 10, tier2: 15, tier3: 20 },
+        'top-coin': { tier1: 10, tier2: 15, tier3: 20 }
     };
 
     const firebaseConfig = { apiKey: "AIzaSyCAQtTRKgOizQjgqCbIZ_Z357LQD2Woee8", authDomain: "earnovate-bot.firebaseapp.com", databaseURL: "https://earnovate-bot-default-rtdb.firebaseio.com", projectId: "earnovate-bot", appId: "1:395184310691:web:9a0a2e5ad0e954b527b216" };
@@ -400,17 +432,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const amount = parseFloat($(`#${coinType}-amount-input`).value) || 0;
         let rate = 0;
 
-        if (coinType === 'niva' || coinType === 'ns') {
-            const rates = marketRates[coinType] || { tier1:0, tier2:0, tier3:0 };
-            // Tier Logic: Tier 1 (10-49k), Tier 2 (50-99k), Tier 3 (100k+)
-            if (amount >= 100000) rate = rates.tier3;
-            else if (amount >= 50000) rate = rates.tier2;
-            else if (amount >= 10000) rate = rates.tier1;
-            else rate = rates.tier1; // fallback
-        } else {
-            // Flat rates for Fira/Top Coin
-            rate = marketRates[coinType] || 0;
-        }
+        // Unified Tier Logic for ALL coins
+        const rates = marketRates[coinType] || { tier1:0, tier2:0, tier3:0 };
+        if (amount >= 100000) rate = rates.tier3;
+        else if (amount >= 50000) rate = rates.tier2;
+        else if (amount >= 10000) rate = rates.tier1;
+        else rate = rates.tier1; // fallback
         
         const payout = (amount / 1000 * rate).toFixed(2);
         $(`#${coinType}-payout-text`).textContent = `You will receive: ~৳${payout} (Rate: ৳${rate}/k)`;
@@ -440,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const { payout, rate } = calculatePayout(coinType);
             const amountK = (amount / 1000) + 'k';
             
-            let message = `🚀 *New Sell Request (${coinType.toUpperCase().replace('-', ' ')})*\n\n👤 *User:* ${telegramUser.first_name} (ID: \`${telegramUser.id}\`)\n💰 *Amount:* ${amountK}\n💵 *Payout:* ৳${payout}\n📊 *Rate Applied:* ৳${rate}/k\n💳 *Method:* ${paymentMethod}\n📱 *Number:* \`${paymentNumber}\``;
+            let message = `🚀 *New Sell Request (${coinType.toUpperCase().replace('-', ' ')})*\n\n👤 *User:* ${telegramUser.first_name} (ID: \`${telegramUser.id}\`)\n💰 *Amount:* ${amountK}\n💵 *Payout:* ৳${payout}\n📊 *Rate:* ৳${rate}/k\n💳 *Method:* ${paymentMethod}\n📱 *Number:* \`${paymentNumber}\``;
             
             if(coinType === 'niva' || coinType === 'ns') {
                 const sender = $(`#${coinType}-sender-user`).value;
@@ -547,7 +574,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadAndDisplayData() {
         db.ref('rates').on('value', (s) => {
             const data = s.val() || {};
-            // Merge with defaults to prevent errors if DB is empty
             marketRates = { ...marketRates, ...data };
             
             // --- Update UI for Users ---
@@ -557,24 +583,17 @@ document.addEventListener('DOMContentLoaded', () => {
             $('#ns-transfer-id').textContent = marketRates.transferIds?.ns || 'N/A';
             $('#fira-transfer-id').textContent = marketRates.transferIds?.fira || 'N/A';
             
-            // Niva Rates Text
-            $('#niva-rates-display').innerHTML = `
-                <p>10k - 49k : ৳${marketRates.niva.tier1} /k</p>
-                <p>50k - 99k : ৳${marketRates.niva.tier2} /k</p>
-                <p>100k+ : ৳${marketRates.niva.tier3} /k</p>`;
-            
-            // NS Rates Text
-            $('#ns-rates-display').innerHTML = `
-                <p>10k - 49k : ৳${marketRates.ns.tier1} /k</p>
-                <p>50k - 99k : ৳${marketRates.ns.tier2} /k</p>
-                <p>100k+ : ৳${marketRates.ns.tier3} /k</p>`;
+            // Generates rate HTML
+            const generateRateHTML = (coinData) => `
+                <p>10k - 49k : ৳${coinData.tier1} /k</p>
+                <p>50k - 99k : ৳${coinData.tier2} /k</p>
+                <p>100k+ : ৳${coinData.tier3} /k</p>`;
 
-            // Fira Rates Text
-            $('#fira-rates-display').innerHTML = `<p class="font-bold text-lg text-primary">৳${marketRates.fira} /k</p><p class="text-xs text-text-secondary">Flat Rate</p>`;
-            
-            // Top Coin Rates Text
-             $('#top-coin-rates-display').innerHTML = `<p class="font-bold text-lg text-primary">৳${marketRates['top-coin']} /k</p><p class="text-xs text-text-secondary">Flat Rate</p>`;
-
+            if(marketRates.niva) $('#niva-rates-display').innerHTML = generateRateHTML(marketRates.niva);
+            if(marketRates.ns) $('#ns-rates-display').innerHTML = generateRateHTML(marketRates.ns);
+            // Fira & Top now use same format
+            if(marketRates.fira) $('#fira-rates-display').innerHTML = generateRateHTML(marketRates.fira);
+            if(marketRates['top-coin']) $('#top-coin-rates-display').innerHTML = generateRateHTML(marketRates['top-coin']);
 
             // --- Update Admin Panel Inputs ---
             if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
@@ -592,8 +611,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 $('#admin-ns-rate-2').value = marketRates.ns.tier2;
                 $('#admin-ns-rate-3').value = marketRates.ns.tier3;
                 
-                $('#admin-fira-rate').value = marketRates.fira;
-                $('#admin-top-rate').value = marketRates['top-coin'];
+                $('#admin-fira-rate-1').value = marketRates.fira?.tier1 || 0;
+                $('#admin-fira-rate-2').value = marketRates.fira?.tier2 || 0;
+                $('#admin-fira-rate-3').value = marketRates.fira?.tier3 || 0;
+
+                $('#admin-top-rate-1').value = marketRates['top-coin']?.tier1 || 0;
+                $('#admin-top-rate-2').value = marketRates['top-coin']?.tier2 || 0;
+                $('#admin-top-rate-3').value = marketRates['top-coin']?.tier3 || 0;
             }
             
             // Recalculate if inputs exist
@@ -641,9 +665,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function handleSettingsUpdate(e) {
         e.preventDefault();
-        showLoader('Updating...');
+        showLoader('Updating Settings...');
         try {
-            // 1. Update Rates
+            // 1. Update Rates (All use Tiered Objects now)
             await db.ref('rates').update({
                 transferIds: {
                     niva: $('#admin-niva-transfer-id').value,
@@ -660,8 +684,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     tier2: parseFloat($('#admin-ns-rate-2').value),
                     tier3: parseFloat($('#admin-ns-rate-3').value)
                 },
-                fira: parseFloat($('#admin-fira-rate').value),
-                'top-coin': parseFloat($('#admin-top-rate').value)
+                fira: {
+                    tier1: parseFloat($('#admin-fira-rate-1').value),
+                    tier2: parseFloat($('#admin-fira-rate-2').value),
+                    tier3: parseFloat($('#admin-fira-rate-3').value)
+                },
+                'top-coin': {
+                    tier1: parseFloat($('#admin-top-rate-1').value),
+                    tier2: parseFloat($('#admin-top-rate-2').value),
+                    tier3: parseFloat($('#admin-top-rate-3').value)
+                }
             });
 
             // 2. Update System Settings
