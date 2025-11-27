@@ -196,7 +196,7 @@
         </div>
     </main>
     
-    <!-- Sell Pages Template (Repeated Logic via JS) -->
+    <!-- Sell Pages Template -->
     
     <!-- Sell Niva Page -->
     <main id="page-sell-niva" class="page flex-grow p-4 pb-28">
@@ -227,7 +227,7 @@
         </div>
     </main>
 
-    <!-- Sell Ns Coin Page (Identical Structure) -->
+    <!-- Sell Ns Coin Page -->
     <main id="page-sell-ns" class="page flex-grow p-4 pb-28">
         <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
              <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Unavailable</h1><p class="text-text-secondary">This coin is currently not accepting orders.</p><button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg w-full" data-page="page-dashboard">Go Back</button></div>
@@ -246,7 +246,7 @@
         </div>
     </main>
 
-    <!-- Sell Fira Page (Updated to Tier System) -->
+    <!-- Sell Fira Page -->
     <main id="page-sell-fira" class="page flex-grow p-4 pb-28">
         <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
              <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Unavailable</h1><p class="text-text-secondary">This coin is currently not accepting orders.</p><button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg w-full" data-page="page-dashboard">Go Back</button></div>
@@ -265,7 +265,7 @@
         </div>
     </main>
 
-    <!-- Sell Top Coin Page (Updated to Tier System) -->
+    <!-- Sell Top Coin Page -->
     <main id="page-sell-top-coin" class="page flex-grow p-4 pb-28">
         <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
              <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Unavailable</h1><p class="text-text-secondary">This coin is currently not accepting orders.</p><button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg w-full" data-page="page-dashboard">Go Back</button></div>
@@ -297,10 +297,12 @@
             </div>
         </section>
 
-        <!-- NEW: Telegram Channel Notice -->
+        <!-- Telegram Channel Notice (Updated Icon) -->
         <section class="rounded-2xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 p-5">
-            <div class="flex items-start gap-3">
-                <div class="bg-blue-500 text-white rounded-full p-2 shrink-0"><span class="material-symbols-outlined text-xl">campaign</span></div>
+            <div class="flex items-start gap-4">
+                <div class="bg-white rounded-full p-1 shadow-sm shrink-0">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="w-10 h-10" alt="Telegram">
+                </div>
                 <div>
                     <h3 class="font-bold text-blue-800 dark:text-blue-400">Join our Channel</h3>
                     <p class="text-sm text-blue-700 dark:text-blue-300 mt-1 mb-3">যে কোন লেনদেনের পূর্বে চ্যানেলে বিস্তারিত দেখে নিন।</p>
@@ -322,10 +324,11 @@
                         <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                 </div>
-                <div class="flex items-center justify-between p-4" onclick="document.querySelector('[data-page=page-terms]').click()">
+                <!-- Updated Terms Button (Fixed) -->
+                <button class="nav-btn-internal w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" data-page="page-terms">
                     <div class="flex items-center gap-3 text-text-primary"><span class="material-symbols-outlined">description</span><span class="font-medium">Terms & Conditions</span></div>
                     <span class="material-symbols-outlined text-text-secondary">chevron_right</span>
-                </div>
+                </button>
             </div>
         </section>
         
@@ -349,7 +352,7 @@
               <!-- Transfer IDs -->
               <fieldset class="border border-slate-700 p-4 rounded-xl"><legend class="px-2 font-bold text-primary text-sm">Transfer IDs</legend><div class="space-y-3"><div><label class="text-xs text-text-secondary">Niva</label><input id="admin-niva-transfer-id" type="text" class="form-input w-full rounded h-8 px-2 text-sm"></div><div><label class="text-xs text-text-secondary">Ns Coin</label><input id="admin-ns-transfer-id" type="text" class="form-input w-full rounded h-8 px-2 text-sm"></div><div><label class="text-xs text-text-secondary">Fira</label><input id="admin-fira-transfer-id" type="text" class="form-input w-full rounded h-8 px-2 text-sm"></div></div></fieldset>
               
-              <!-- COIN RATES -->
+              <!-- COIN RATES (Updated with step="any") -->
               <fieldset class="border border-slate-700 p-4 rounded-xl">
                   <legend class="px-2 font-bold text-primary text-sm">Coin Rates (Per 1k)</legend>
                   
@@ -357,9 +360,9 @@
                   <div class="mb-4 bg-emerald-500/10 p-2 rounded">
                       <p class="text-xs font-bold text-emerald-500 mb-2">Niva (Tiered)</p>
                       <div class="grid grid-cols-3 gap-2">
-                          <div><label class="text-[10px] text-text-secondary">10k+</label><input id="admin-niva-rate-1" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
-                          <div><label class="text-[10px] text-text-secondary">50k+</label><input id="admin-niva-rate-2" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
-                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-niva-rate-3" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">10k+</label><input id="admin-niva-rate-1" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">50k+</label><input id="admin-niva-rate-2" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-niva-rate-3" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
                       </div>
                   </div>
 
@@ -367,9 +370,9 @@
                   <div class="mb-4 bg-purple-500/10 p-2 rounded">
                       <p class="text-xs font-bold text-purple-500 mb-2">NS (Tiered)</p>
                       <div class="grid grid-cols-3 gap-2">
-                          <div><label class="text-[10px] text-text-secondary">10k+</label><input id="admin-ns-rate-1" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
-                          <div><label class="text-[10px] text-text-secondary">50k+</label><input id="admin-ns-rate-2" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
-                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-ns-rate-3" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">10k+</label><input id="admin-ns-rate-1" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">50k+</label><input id="admin-ns-rate-2" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-ns-rate-3" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
                       </div>
                   </div>
 
@@ -377,9 +380,9 @@
                   <div class="mb-4 bg-amber-500/10 p-2 rounded">
                     <p class="text-xs font-bold text-amber-500 mb-2">Fira (Tiered)</p>
                     <div class="grid grid-cols-3 gap-2">
-                        <div><label class="text-[10px] text-text-secondary">Low</label><input id="admin-fira-rate-1" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
-                        <div><label class="text-[10px] text-text-secondary">Mid</label><input id="admin-fira-rate-2" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
-                        <div><label class="text-[10px] text-text-secondary">High</label><input id="admin-fira-rate-3" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                        <div><label class="text-[10px] text-text-secondary">Low</label><input id="admin-fira-rate-1" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                        <div><label class="text-[10px] text-text-secondary">Mid</label><input id="admin-fira-rate-2" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                        <div><label class="text-[10px] text-text-secondary">High</label><input id="admin-fira-rate-3" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
                     </div>
                 </div>
 
@@ -387,9 +390,9 @@
                 <div class="mb-0 bg-sky-500/10 p-2 rounded">
                     <p class="text-xs font-bold text-sky-500 mb-2">Top Coin (Tiered)</p>
                     <div class="grid grid-cols-3 gap-2">
-                        <div><label class="text-[10px] text-text-secondary">Low</label><input id="admin-top-rate-1" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
-                        <div><label class="text-[10px] text-text-secondary">Mid</label><input id="admin-top-rate-2" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
-                        <div><label class="text-[10px] text-text-secondary">High</label><input id="admin-top-rate-3" type="number" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                        <div><label class="text-[10px] text-text-secondary">Low</label><input id="admin-top-rate-1" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                        <div><label class="text-[10px] text-text-secondary">Mid</label><input id="admin-top-rate-2" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                        <div><label class="text-[10px] text-text-secondary">High</label><input id="admin-top-rate-3" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
                     </div>
                 </div>
               </fieldset>
@@ -432,13 +435,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let telegramUser, tg;
     
-    // Updated Global Rates Object: All coins use Tier System now
+    // Global Rates Object
     let marketRates = {
         transferIds: { niva: '', ns: '', fira: '' },
         niva: { tier1: 10, tier2: 15, tier3: 20 },
         ns: { tier1: 10, tier2: 15, tier3: 20 },
-        fira: { tier1: 15, tier2: 15, tier3: 15 }, // Converted from flat to tiered object
-        'top-coin': { tier1: 10, tier2: 10, tier3: 10 } // Converted from flat to tiered object
+        fira: { tier1: 15, tier2: 15, tier3: 15 },
+        'top-coin': { tier1: 10, tier2: 10, tier3: 10 }
     };
 
     const firebaseConfig = { apiKey: "AIzaSyCAQtTRKgOizQjgqCbIZ_Z357LQD2Woee8", authDomain: "earnovate-bot.firebaseapp.com", databaseURL: "https://earnovate-bot-default-rtdb.firebaseio.com", projectId: "earnovate-bot", appId: "1:395184310691:web:9a0a2e5ad0e954b527b216" };
@@ -469,10 +472,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!window.Telegram || !window.Telegram.WebApp) throw new Error("Telegram Web App context not found.");
             tg = window.Telegram.WebApp; tg.ready(); tg.expand();
             
-            // Try to get user data, mock if local testing (remove mock in production)
             telegramUser = tg.initDataUnsafe?.user;
-            // Uncomment next line for testing outside Telegram
-            // if(!telegramUser) telegramUser = { id: '6703675335', first_name: 'TestAdmin', photo_url: 'logo19.jpg' };
+            // if(!telegramUser) telegramUser = { id: '6703675335', first_name: 'TestAdmin', photo_url: 'logo19.jpg' }; // Uncomment for testing
 
             if (!telegramUser?.id) throw new Error("Could not get Telegram user data.");
             
@@ -523,19 +524,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Event listeners for all coins
         ['niva', 'ns', 'fira', 'top-coin'].forEach(coin => {
-             // Amount Input Calculation
-             $(`#${coin}-amount-input`).addEventListener('input', () => calculatePayout(coin));
-             // Form Submit
-             $(`#sell-${coin}-form`).addEventListener('submit', (e) => handleCoinSubmit(e, coin));
-             // Copy ID (if exists)
+             const amountInput = $(`#${coin}-amount-input`);
+             if(amountInput) amountInput.addEventListener('input', () => calculatePayout(coin));
+             
+             const form = $(`#sell-${coin}-form`);
+             if(form) form.addEventListener('submit', (e) => handleCoinSubmit(e, coin));
+             
              const copyBox = $(`#${coin}-transfer-id-box`);
              if(copyBox) copyBox.addEventListener('click', () => copyToClipboard($(`#${coin}-transfer-id`).textContent));
-             // File Upload (except top-coin logic handled inside function, but called here)
+             
              if(coin !== 'top-coin' || coin === 'fira') setupFileUpload(coin); 
         });
 
-        // Top coin specific coupon handling (no file upload usually, but if needed logic is safe)
-        // Setup file upload specifically for Fira which was video
         setupFileUpload('fira'); 
 
         if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
@@ -552,22 +552,19 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.clipboard.writeText(text).then(() => tg.showAlert('Transfer ID Copied!')).catch(() => tg.showAlert('Failed to copy.'));
     }
 
-    // Generic Rate Calculation for ALL coins (Now all are tiered)
     function calculatePayout(coinType) {
         const amount = parseFloat($(`#${coinType}-amount-input`).value) || 0;
         let rate = 0;
         
         const rates = marketRates[coinType] || { tier1:0, tier2:0, tier3:0 };
         
-        // Universal Tier Logic
         if (amount >= 100000) rate = rates.tier3;
         else if (amount >= 50000) rate = rates.tier2;
         else if (amount >= 10000) rate = rates.tier1;
-        else rate = rates.tier1; // fallback
+        else rate = rates.tier1;
         
         const payout = (amount / 1000 * rate).toFixed(2);
         
-        // Determine currency color based on coin
         let colorClass = 'text-primary';
         if(coinType === 'ns') colorClass = 'text-purple-500';
         if(coinType === 'fira') colorClass = 'text-amber-500';
@@ -607,7 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let message = `🚀 *New Order (${coinType.toUpperCase().replace('-', ' ')})*\n\n👤 *User:* ${telegramUser.first_name} (ID: \`${telegramUser.id}\`)\n💰 *Amount:* ${amountK}\n💵 *Payout:* ৳${payout}\n📊 *Rate:* ৳${rate}/k\n💳 *Method:* ${paymentMethod}\n📱 *Number:* \`${paymentNumber}\``;
             
-            // Specific Fields
             if(coinType === 'niva' || coinType === 'ns') {
                 const sender = $(`#${coinType}-sender-user`).value;
                 message += `\n👤 *Sender Name:* \`${sender}\``;
@@ -655,7 +651,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tg.showAlert('Order Submitted Successfully!');
             e.target.reset();
             
-            // Reset Preview
             if(coinType !== 'top-coin') {
                 $(`#${coinType}-upload-prompt`).classList.remove('hidden');
                 $(`#${coinType}-preview-container`).classList.add('hidden');
@@ -668,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let history = JSON.parse(localStorage.getItem('sellHistory') || '[]');
         history.unshift(item);
         const now = Date.now();
-        history = history.filter(h => now - h.time < 86400000); // 24h
+        history = history.filter(h => now - h.time < 86400000); 
         localStorage.setItem('sellHistory', JSON.stringify(history));
     }
 
@@ -706,10 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showPage(pageId) {
         $$(".page").forEach(p => p.classList.remove("active"));
         const page = $(`#${pageId}`); 
-        if(page) {
-             page.classList.add("active");
-             // Trigger reflow for animation if needed
-        }
+        if(page) page.classList.add("active");
         
         let activeNav = 'dashboard';
         if (pageId === 'page-history') { activeNav = 'history'; renderHistory(); }
@@ -728,14 +720,11 @@ document.addEventListener('DOMContentLoaded', () => {
         db.ref('rates').on('value', (s) => {
             const data = s.val() || {};
             
-            // Normalize data structures (Ensure tiers exist even if old DB data was flat)
-            // If data.fira is a number, convert to object locally for UI display to avoid crash
             if (typeof data.fira === 'number') data.fira = { tier1: data.fira, tier2: data.fira, tier3: data.fira };
             if (typeof data['top-coin'] === 'number') data['top-coin'] = { tier1: data['top-coin'], tier2: data['top-coin'], tier3: data['top-coin'] };
 
             marketRates = { ...marketRates, ...data };
             
-            // --- Update User UI ---
             $('#niva-transfer-id').textContent = marketRates.transferIds?.niva || 'N/A';
             $('#ns-transfer-id').textContent = marketRates.transferIds?.ns || 'N/A';
             $('#fira-transfer-id').textContent = marketRates.transferIds?.fira || 'N/A';
@@ -756,13 +745,11 @@ document.addEventListener('DOMContentLoaded', () => {
             renderRates('fira', 'fira-rates-display');
             renderRates('top-coin', 'top-coin-rates-display');
 
-            // --- Update Admin Panel Inputs ---
             if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
                 $('#admin-niva-transfer-id').value = marketRates.transferIds?.niva || '';
                 $('#admin-ns-transfer-id').value = marketRates.transferIds?.ns || '';
                 $('#admin-fira-transfer-id').value = marketRates.transferIds?.fira || '';
                 
-                // Helper to fill admin inputs
                 const fillAdmin = (coin, prefix) => {
                     const r = marketRates[coin] || {tier1:0,tier2:0,tier3:0};
                     $(`#${prefix}-1`).value = r.tier1;
@@ -776,7 +763,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 fillAdmin('top-coin', 'admin-top-rate');
             }
             
-            // Recalculate
             ['niva', 'ns', 'fira', 'top-coin'].forEach(c => {
                  if($(`#${c}-amount-input`).value) calculatePayout(c);
             });
@@ -822,7 +808,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         showLoader('Saving...');
         try {
-            // Helper to get rate object from inputs
             const getRates = (prefix) => ({
                 tier1: parseFloat($(`#${prefix}-1`).value) || 0,
                 tier2: parseFloat($(`#${prefix}-2`).value) || 0,
