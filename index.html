@@ -81,7 +81,20 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-        <!-- Info Card -->
+        
+        <!-- NEW NOTICE SECTION -->
+        <div class="col-span-1 md:col-span-2">
+            <div class="bg-amber-900/30 border border-amber-600/50 p-4 rounded-xl">
+                <h3 class="font-bold text-amber-500 mb-2 flex items-center gap-2"><span class="material-symbols-outlined">campaign</span> Notice</h3>
+                <ul class="text-sm text-amber-400 space-y-2 list-disc list-inside">
+                    <li>সেন্ড মানি চার্জ 5/- কাটা হবে</li>
+                    <li>বড় এমাউন্ট ডিল করতে অ্যাডমিন কে ইনবক্স করবেন</li>
+                    <li>প্রতিটা রিকোয়েস্ট ম্যানুয়ালি চেক করা হয় তাই ফেক ডিটেইল দেওয়া থেকে বিরত থাকবেন</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- How it works Card -->
         <div class="col-span-1 md:col-span-2">
             <div class="bg-blue-900/30 border border-blue-600/50 p-4 rounded-xl">
                 <h3 class="font-bold text-blue-500 mb-1">How it works</h3>
@@ -108,7 +121,7 @@
         <div class="coin-system-content">
             <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Niva Coin</h1><div class="size-8"></div></header>
             <div id="niva-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-lg flex items-center gap-4 my-4 transition-transform active:scale-[0.98]"><div class="flex-1"><p class="text-sm text-text-secondary">Transfer to ID</p><p id="niva-transfer-id" class="text-lg font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
-            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Rates</h3><div class="space-y-1 text-sm text-center"><p>10k - 49k : ৳10 /k</p><p>50k - 99k : ৳15 /k</p><p>100k+ : ৳20 /k</p></div></div>
+            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Rates</h3><div id="niva-rates-display" class="space-y-1 text-sm text-center">Loading rates...</div></div>
             <form id="sell-niva-form" class="space-y-6">
                 <div><label class="block mb-2">Sender Username/ID</label><input id="niva-sender-user" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="Enter sender name used in game" type="text"/></div>
                 <div><label class="block mb-2">Amount</label><div class="relative"><input id="niva-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-16" placeholder="Min 10000" type="number"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">NIVA</span></div><p id="niva-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
@@ -127,7 +140,7 @@
         <div class="coin-system-content">
             <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Ns Coin</h1><div class="size-8"></div></header>
             <div id="ns-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-lg flex items-center gap-4 my-4 transition-transform active:scale-[0.98]"><div class="flex-1"><p class="text-sm text-text-secondary">Transfer to ID</p><p id="ns-transfer-id" class="text-lg font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
-            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Rates</h3><div class="space-y-1 text-sm text-center"><p>10k - 49k : ৳10 /k</p><p>50k - 99k : ৳15 /k</p><p>100k+ : ৳20 /k</p></div></div>
+            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Rates</h3><div id="ns-rates-display" class="space-y-1 text-sm text-center">Loading rates...</div></div>
             <form id="sell-ns-form" class="space-y-6">
                 <div><label class="block mb-2">Sender Username/ID</label><input id="ns-sender-user" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4" placeholder="Enter sender name used in game" type="text"/></div>
                 <div><label class="block mb-2">Amount</label><div class="relative"><input id="ns-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-16" placeholder="Min 10000" type="number"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">NS</span></div><p id="ns-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
@@ -146,7 +159,7 @@
         <div class="coin-system-content">
             <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Fira Coin</h1><div class="size-8"></div></header>
             <div id="fira-transfer-id-box" class="cursor-pointer bg-card-background p-3 rounded-lg flex items-center gap-4 my-4 transition-transform active:scale-[0.98]"><div class="flex-1"><p class="text-sm text-text-secondary">Transfer to ID</p><p id="fira-transfer-id" class="text-lg font-bold text-primary">...</p></div><span class="material-symbols-outlined text-text-secondary">content_copy</span></div>
-            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Fira Rates</h3><div id="fira-rates-display" class="space-y-2 text-sm"></div></div>
+            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Fira Rates</h3><div id="fira-rates-display" class="space-y-2 text-sm text-center">Loading...</div></div>
             <form id="sell-fira-form" class="space-y-6">
                 <div><label class="block mb-2">Amount</label><div class="relative"><input id="fira-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-16" placeholder="e.g., 1000" type="number" step="any"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">FIRA</span></div><p id="fira-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
                 <div><h2 class="text-lg font-bold mb-2">Proof (Video)</h2><div class="relative w-full min-h-[120px] p-6 border-2 border-dashed border-slate-700 rounded-xl bg-card-background"><div id="fira-upload-prompt" class="flex flex-col items-center justify-center text-center cursor-pointer"><span class="material-symbols-outlined text-4xl text-slate-400 mb-2">videocam</span><p>Attach Screen Recording</p></div><div id="fira-preview-container" class="hidden text-center"><p id="fira-file-name" class="text-sm text-primary break-all"></p></div><input id="fira-file-input" required class="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="video/*"/></div></div>
@@ -156,14 +169,14 @@
         </div>
     </main>
 
-    <!-- Sell Top Coin Page (Unchanged mostly) -->
+    <!-- Sell Top Coin Page -->
     <main id="page-sell-top-coin" class="page flex-grow p-4 pb-28">
         <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center">
             <div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Top Coin Sales Unavailable</h1><p class="text-text-secondary">এই কয়েন টির অর্ডার কমপ্লিট হয়ে গিয়েছে, পরবর্তী অর্ডার আসা পর্যন্ত চ্যানেলে চোখ রাখুন</p><button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg" data-page="page-dashboard">Dashboard</button></div>
         </div>
         <div class="coin-system-content">
             <header class="flex items-center py-2 justify-between"><button class="nav-btn-internal text-white flex size-10 items-center justify-center -ml-2" data-page="page-dashboard"><span class="material-symbols-outlined text-2xl">arrow_back</span></button><h1 class="text-lg font-bold flex-1 text-center">Sell Top Coin</h1><div class="size-8"></div></header>
-            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Rates</h3><div id="top-coin-rates-display" class="space-y-2 text-sm"></div></div>
+            <div class="rounded-xl bg-card-background my-4 p-4"><h3 class="text-lg font-bold mb-3 text-center">Current Rates</h3><div id="top-coin-rates-display" class="space-y-2 text-sm text-center">Loading...</div></div>
             <form id="sell-top-coin-form" class="space-y-6">
                 <div><label class="block mb-2">Amount</label><div class="relative"><input id="top-coin-amount-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background h-14 p-4 pr-24" placeholder="e.g., 1000" type="number" step="any"/><span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">TOP</span></div><p id="top-coin-payout-text" class="text-slate-300 pt-2">You will receive: ~৳0.00</p></div>
                 <div><label for="top-coin-coupon-input" class="block mb-2 text-lg font-bold">Coupon Code</label><textarea id="top-coin-coupon-input" required class="form-input w-full rounded-lg text-white border-slate-700 bg-card-background p-4" placeholder="Paste coupon code" rows="4"></textarea></div>
@@ -185,7 +198,9 @@
           <h2 class="px-2 mb-3 text-sm font-semibold uppercase text-text-secondary">Admin Panel</h2>
           <div class="bg-card-background rounded-xl p-4 space-y-4">
             <h3 class="font-bold">Update Settings</h3>
-            <form id="update-rates-form" class="space-y-4">
+            <form id="update-settings-form" class="space-y-4">
+              
+              <!-- System Status -->
               <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">System</legend><div class="flex items-center justify-between p-2"><div class="flex items-center gap-3"><span id="system-status-icon" class="material-symbols-outlined"></span><span id="system-status-text"></span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="admin-system-status-toggle" class="sr-only peer"><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div>
                 <!-- Individual Coin Toggles -->
                 <div class="mt-2 space-y-2">
@@ -195,7 +210,47 @@
                     <div class="flex justify-between items-center text-sm"><span>Top Coin</span><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="admin-top-status" class="sr-only peer"><div class="w-9 h-5 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div></label></div>
                 </div>
               </fieldset>
+
+              <!-- Transfer IDs -->
               <fieldset class="border border-slate-700 p-3 rounded-lg"><legend class="px-2 font-semibold text-primary">Transfer IDs</legend><div class="space-y-3"><div><label class="block text-sm mb-1">Niva ID</label><input id="admin-niva-transfer-id" type="text" class="form-input w-full rounded-lg h-10 px-3"></div><div><label class="block text-sm mb-1">Ns Coin ID</label><input id="admin-ns-transfer-id" type="text" class="form-input w-full rounded-lg h-10 px-3"></div><div><label class="block text-sm mb-1">Fira ID</label><input id="admin-fira-transfer-id" type="text" class="form-input w-full rounded-lg h-10 px-3"></div></div></fieldset>
+              
+              <!-- COIN RATES (PROFESSIONAL SYSTEM) -->
+              <fieldset class="border border-slate-700 p-3 rounded-lg">
+                  <legend class="px-2 font-semibold text-primary">Coin Rates (Per 1k)</legend>
+                  
+                  <!-- Niva Rates -->
+                  <div class="mb-4">
+                      <p class="text-sm font-bold text-emerald-500 mb-2">Niva Rates</p>
+                      <div class="grid grid-cols-3 gap-2">
+                          <div><label class="text-[10px] text-text-secondary">10k-49k</label><input id="admin-niva-rate-1" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">50k-99k</label><input id="admin-niva-rate-2" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-niva-rate-3" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                      </div>
+                  </div>
+
+                  <!-- NS Rates -->
+                  <div class="mb-4">
+                      <p class="text-sm font-bold text-purple-500 mb-2">NS Rates</p>
+                      <div class="grid grid-cols-3 gap-2">
+                          <div><label class="text-[10px] text-text-secondary">10k-49k</label><input id="admin-ns-rate-1" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">50k-99k</label><input id="admin-ns-rate-2" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-ns-rate-3" type="number" class="form-input w-full rounded text-sm px-2 py-1"></div>
+                      </div>
+                  </div>
+
+                  <!-- Fira & Top -->
+                  <div class="grid grid-cols-2 gap-4">
+                      <div>
+                          <p class="text-sm font-bold text-amber-500 mb-1">Fira (Flat)</p>
+                          <input id="admin-fira-rate" type="number" class="form-input w-full rounded px-2 py-1">
+                      </div>
+                      <div>
+                          <p class="text-sm font-bold text-sky-500 mb-1">Top (Flat)</p>
+                          <input id="admin-top-rate" type="number" class="form-input w-full rounded px-2 py-1">
+                      </div>
+                  </div>
+              </fieldset>
+
               <button type="submit" class="w-full bg-primary text-background font-bold py-2.5 px-4 rounded-lg">Update All Settings</button>
             </form>
           </div>
@@ -232,7 +287,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const showLoader = (text = '') => { $('#loader-text').textContent = text; $('#loading-overlay').classList.remove('hidden'); };
     const hideLoader = () => { $('#loader-text').textContent = ''; $('#loading-overlay').classList.add('hidden'); };
     
-    let telegramUser, tg, marketRates = {};
+    let telegramUser, tg;
+    // Default Global Rates Object
+    let marketRates = {
+        transferIds: { niva: '', ns: '', fira: '' },
+        niva: { tier1: 10, tier2: 15, tier3: 20 },
+        ns: { tier1: 10, tier2: 15, tier3: 20 },
+        fira: 15,
+        'top-coin': 10
+    };
 
     const firebaseConfig = { apiKey: "AIzaSyCAQtTRKgOizQjgqCbIZ_Z357LQD2Woee8", authDomain: "earnovate-bot.firebaseapp.com", databaseURL: "https://earnovate-bot-default-rtdb.firebaseio.com", projectId: "earnovate-bot", appId: "1:395184310691:web:9a0a2e5ad0e954b527b216" };
     firebase.initializeApp(firebaseConfig);
@@ -284,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) $('#admin-panel').classList.remove('hidden');
         $('#app-container').classList.remove('hidden');
         setupEventListeners();
-        loadAndDisplayRates();
+        loadAndDisplayData();
         loadAppSettings();
         showPage('page-dashboard');
     }
@@ -320,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#sell-top-coin-form').addEventListener('submit', (e) => handleCoinSubmit(e, 'top-coin'));
         
         if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
-            $('#update-rates-form').addEventListener('submit', handleSettingsUpdate);
+            $('#update-settings-form').addEventListener('submit', handleSettingsUpdate);
             $('#admin-system-status-toggle').addEventListener('change', (e) => {
                 $('#system-status-text').textContent = e.target.checked ? 'System Online' : 'System Offline';
                 $('#system-status-icon').textContent = e.target.checked ? 'public' : 'public_off';
@@ -338,14 +401,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let rate = 0;
 
         if (coinType === 'niva' || coinType === 'ns') {
-            // New logic: 10-49k=10, 50-99k=15, 100k+=20
-            if (amount >= 100000) rate = 20;
-            else if (amount >= 50000) rate = 15;
-            else if (amount >= 10000) rate = 10;
+            const rates = marketRates[coinType] || { tier1:0, tier2:0, tier3:0 };
+            // Tier Logic: Tier 1 (10-49k), Tier 2 (50-99k), Tier 3 (100k+)
+            if (amount >= 100000) rate = rates.tier3;
+            else if (amount >= 50000) rate = rates.tier2;
+            else if (amount >= 10000) rate = rates.tier1;
+            else rate = rates.tier1; // fallback
         } else {
-             // Fallback for Fira/Top Coin (using simple linear or existing database logic if needed, here keeping simple)
-             const tiers = marketRates.coinRates?.[coinType]?.tiers || [];
-             if(tiers.length > 0) rate = tiers[0].rate; // Simplified for others
+            // Flat rates for Fira/Top Coin
+            rate = marketRates[coinType] || 0;
         }
         
         const payout = (amount / 1000 * rate).toFixed(2);
@@ -373,10 +437,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const paymentMethodName = 'paymentMethod' + coinType.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
             const paymentMethod = e.target[paymentMethodName].value;
             const paymentNumber = $(`#${coinType}-payment-number`).value;
-            const { payout } = calculatePayout(coinType);
+            const { payout, rate } = calculatePayout(coinType);
             const amountK = (amount / 1000) + 'k';
             
-            let message = `🚀 *New Sell Request (${coinType.toUpperCase().replace('-', ' ')})*\n\n👤 *User:* ${telegramUser.first_name} (ID: \`${telegramUser.id}\`)\n💰 *Amount:* ${amountK}\n💵 *Payout:* ৳${payout}\n💳 *Method:* ${paymentMethod}\n📱 *Number:* \`${paymentNumber}\``;
+            let message = `🚀 *New Sell Request (${coinType.toUpperCase().replace('-', ' ')})*\n\n👤 *User:* ${telegramUser.first_name} (ID: \`${telegramUser.id}\`)\n💰 *Amount:* ${amountK}\n💵 *Payout:* ৳${payout}\n📊 *Rate Applied:* ৳${rate}/k\n💳 *Method:* ${paymentMethod}\n📱 *Number:* \`${paymentNumber}\``;
             
             if(coinType === 'niva' || coinType === 'ns') {
                 const sender = $(`#${coinType}-sender-user`).value;
@@ -436,7 +500,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveHistory(item) {
         let history = JSON.parse(localStorage.getItem('sellHistory') || '[]');
         history.unshift(item);
-        // Keep only last 24h
         const now = Date.now();
         history = history.filter(h => now - h.time < 86400000);
         localStorage.setItem('sellHistory', JSON.stringify(history));
@@ -446,8 +509,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const list = $('#history-list');
         let history = JSON.parse(localStorage.getItem('sellHistory') || '[]');
         const now = Date.now();
-        history = history.filter(h => now - h.time < 86400000); // Filter display too
-        localStorage.setItem('sellHistory', JSON.stringify(history)); // Update storage
+        history = history.filter(h => now - h.time < 86400000);
+        localStorage.setItem('sellHistory', JSON.stringify(history));
 
         if(history.length === 0) { list.innerHTML = '<p class="text-text-secondary text-center py-10">No history (last 24h).</p>'; return; }
         
@@ -481,24 +544,63 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function loadAndDisplayRates() {
+    function loadAndDisplayData() {
         db.ref('rates').on('value', (s) => {
-            const rates = s.val() || {}; marketRates = rates;
-            $('#niva-transfer-id').textContent = rates.transferIds?.niva || 'N/A';
-            $('#ns-transfer-id').textContent = rates.transferIds?.ns || 'N/A';
-            $('#fira-transfer-id').textContent = rates.transferIds?.fira || 'N/A';
+            const data = s.val() || {};
+            // Merge with defaults to prevent errors if DB is empty
+            marketRates = { ...marketRates, ...data };
             
-            // Fira Rate Display (Assuming array from DB or default)
-            const firaRate = rates.coinRates?.fira?.tiers?.[0]?.rate || 0;
-            const ratesDisplay = $('#fira-rates-display');
-            if(ratesDisplay) ratesDisplay.innerHTML = `<div class="flex justify-between p-2"><span class="text-text-secondary">Flat Rate</span><span class="text-primary font-bold">৳${firaRate}/k</span></div>`;
+            // --- Update UI for Users ---
+            
+            // Transfer IDs
+            $('#niva-transfer-id').textContent = marketRates.transferIds?.niva || 'N/A';
+            $('#ns-transfer-id').textContent = marketRates.transferIds?.ns || 'N/A';
+            $('#fira-transfer-id').textContent = marketRates.transferIds?.fira || 'N/A';
+            
+            // Niva Rates Text
+            $('#niva-rates-display').innerHTML = `
+                <p>10k - 49k : ৳${marketRates.niva.tier1} /k</p>
+                <p>50k - 99k : ৳${marketRates.niva.tier2} /k</p>
+                <p>100k+ : ৳${marketRates.niva.tier3} /k</p>`;
+            
+            // NS Rates Text
+            $('#ns-rates-display').innerHTML = `
+                <p>10k - 49k : ৳${marketRates.ns.tier1} /k</p>
+                <p>50k - 99k : ৳${marketRates.ns.tier2} /k</p>
+                <p>100k+ : ৳${marketRates.ns.tier3} /k</p>`;
 
-             // Admin inputs
+            // Fira Rates Text
+            $('#fira-rates-display').innerHTML = `<p class="font-bold text-lg text-primary">৳${marketRates.fira} /k</p><p class="text-xs text-text-secondary">Flat Rate</p>`;
+            
+            // Top Coin Rates Text
+             $('#top-coin-rates-display').innerHTML = `<p class="font-bold text-lg text-primary">৳${marketRates['top-coin']} /k</p><p class="text-xs text-text-secondary">Flat Rate</p>`;
+
+
+            // --- Update Admin Panel Inputs ---
             if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
-                $('#admin-niva-transfer-id').value = rates.transferIds?.niva || '';
-                $('#admin-ns-transfer-id').value = rates.transferIds?.ns || '';
-                $('#admin-fira-transfer-id').value = rates.transferIds?.fira || '';
+                // Transfer IDs
+                $('#admin-niva-transfer-id').value = marketRates.transferIds?.niva || '';
+                $('#admin-ns-transfer-id').value = marketRates.transferIds?.ns || '';
+                $('#admin-fira-transfer-id').value = marketRates.transferIds?.fira || '';
+                
+                // Rates
+                $('#admin-niva-rate-1').value = marketRates.niva.tier1;
+                $('#admin-niva-rate-2').value = marketRates.niva.tier2;
+                $('#admin-niva-rate-3').value = marketRates.niva.tier3;
+                
+                $('#admin-ns-rate-1').value = marketRates.ns.tier1;
+                $('#admin-ns-rate-2').value = marketRates.ns.tier2;
+                $('#admin-ns-rate-3').value = marketRates.ns.tier3;
+                
+                $('#admin-fira-rate').value = marketRates.fira;
+                $('#admin-top-rate').value = marketRates['top-coin'];
             }
+            
+            // Recalculate if inputs exist
+            if($('#niva-amount-input').value) calculatePayout('niva');
+            if($('#ns-amount-input').value) calculatePayout('ns');
+            if($('#fira-amount-input').value) calculatePayout('fira');
+            if($('#top-coin-amount-input').value) calculatePayout('top-coin');
         });
     }
 
@@ -541,11 +643,28 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         showLoader('Updating...');
         try {
-            await db.ref('rates/transferIds').update({
-                niva: $('#admin-niva-transfer-id').value,
-                ns: $('#admin-ns-transfer-id').value,
-                fira: $('#admin-fira-transfer-id').value
+            // 1. Update Rates
+            await db.ref('rates').update({
+                transferIds: {
+                    niva: $('#admin-niva-transfer-id').value,
+                    ns: $('#admin-ns-transfer-id').value,
+                    fira: $('#admin-fira-transfer-id').value
+                },
+                niva: {
+                    tier1: parseFloat($('#admin-niva-rate-1').value),
+                    tier2: parseFloat($('#admin-niva-rate-2').value),
+                    tier3: parseFloat($('#admin-niva-rate-3').value)
+                },
+                ns: {
+                    tier1: parseFloat($('#admin-ns-rate-1').value),
+                    tier2: parseFloat($('#admin-ns-rate-2').value),
+                    tier3: parseFloat($('#admin-ns-rate-3').value)
+                },
+                fira: parseFloat($('#admin-fira-rate').value),
+                'top-coin': parseFloat($('#admin-top-rate').value)
             });
+
+            // 2. Update System Settings
             await db.ref('settings').update({
                 systemStatus: $('#admin-system-status-toggle').checked ? 'on' : 'off',
                 coinSystemStatus: {
