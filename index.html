@@ -27,6 +27,16 @@
     
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* Professional Wiggle/Rotate Animation for Buttons */
+    @keyframes wiggle {
+        0% { transform: rotate(0deg); }
+        25% { transform: rotate(-3deg); }
+        50% { transform: rotate(0deg); }
+        75% { transform: rotate(3deg); }
+        100% { transform: rotate(0deg); }
+    }
+    .animate-wiggle { animation: wiggle 2s ease-in-out infinite; }
+
     .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #00D27F; width: 32px; height: 32px; animation: spin 0.8s linear infinite; }
     .btn-loader { border: 2px solid #ffffff; border-radius: 50%; border-top: 2px solid transparent; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; }
 
@@ -53,11 +63,8 @@
     
     html.light .notice-box-amber { background-color: #FEF3C7; border: 1px solid #FCD34D; }
     html.light .notice-text-amber-title { color: #92400E; }
-    html.light .notice-text-amber-body { color: #B45309; }
-    
     html.light .notice-box-blue { background-color: #DBEAFE; border: 1px solid #93C5FD; }
     html.light .notice-text-blue-title { color: #1E40AF; }
-    html.light .notice-text-blue-body { color: #1D4ED8; }
 
     /* --- Dark Mode --- */
     html.dark body { background-color: #0F172A; color: #F8FAFC; }
@@ -71,11 +78,8 @@
 
     html.dark .notice-box-amber { background-color: rgba(120, 53, 15, 0.3); border: 1px solid rgba(217, 119, 6, 0.5); }
     html.dark .notice-text-amber-title { color: #F59E0B; }
-    html.dark .notice-text-amber-body { color: #FBBF24; }
-
     html.dark .notice-box-blue { background-color: rgba(30, 58, 138, 0.3); border: 1px solid rgba(37, 99, 235, 0.5); }
     html.dark .notice-text-blue-title { color: #3B82F6; }
-    html.dark .notice-text-blue-body { color: #60A5FA; }
   </style>
   <script id="tailwind-config">
     tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary": "#00D27F", "background": "#0F172A" }, fontFamily: { "display": ["Inter", "sans-serif"] } } } }
@@ -184,7 +188,7 @@
         <h1 class="text-2xl font-bold mb-2 mt-4">Premium Shop</h1>
         <p class="text-text-secondary text-sm mb-4">Buy Premium VPNs & Tools instantly.</p>
         
-        <!-- Shop Grid (Zoomed Out / Smaller) -->
+        <!-- Shop Grid -->
         <div id="shop-container" class="grid grid-cols-2 gap-3">
             <!-- Products injected by JS -->
             <div class="col-span-2 flex flex-col items-center justify-center py-12 opacity-60">
@@ -194,7 +198,7 @@
         </div>
     </main>
 
-    <!-- PRODUCT DETAILS PAGE (FIXED UI) -->
+    <!-- PRODUCT DETAILS PAGE -->
     <main id="page-product-details" class="page flex-grow p-4 pb-32 bg-white dark:bg-slate-900 min-h-screen z-[55] absolute inset-0 overflow-y-auto">
         <header class="flex items-center py-2 mb-4">
             <button class="nav-btn-internal text-gray-800 dark:text-white flex size-10 items-center justify-center -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800" data-page="page-shop">
@@ -224,7 +228,8 @@
                     </div>
                 </div>
                 
-                <button id="detail-btn-buy" class="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all text-lg flex items-center justify-center gap-2 hover:bg-emerald-500">
+                <!-- Animated Order Button -->
+                <button id="detail-btn-buy" class="animate-wiggle w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all text-lg flex items-center justify-center gap-2 hover:bg-emerald-500">
                     <span>Order Now</span>
                     <span class="material-symbols-outlined">shopping_cart_checkout</span>
                 </button>
@@ -630,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 class="font-bold text-xs text-text-primary line-clamp-2 leading-tight flex-1 mb-2">${p.title}</h3>
                     <div class="mt-auto flex items-center justify-between">
                         <span class="font-bold text-base text-primary">৳${p.price}</span>
-                        <button class="buy-btn bg-primary text-background text-[10px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm z-10">ORDER</button>
+                        <button class="buy-btn animate-wiggle bg-primary text-background text-[10px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm z-10">ORDER</button>
                     </div>
                 `;
                 
@@ -740,12 +745,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(async () => {
             try {
-                // FIXED: Explicitly construct message string
-                const message = `🛍 *New Shop Order*\n\n🛒 *Item:* ${currentProduct.title}\n💰 *Price:* ৳${currentProduct.price}\n\n👤 *Buyer:* @${telegramUser.username}\n🆔 *User ID:* \`${telegramUser.id}\`\n\n💳 *Paid via:* ${currentPaymentMethod.toUpperCase()}\n🧾 *TrxID:* \`${trxId}\`\n\n📅 *${new Date().toLocaleString()}*`;
+                // FIXED: Explicitly construct message string and using HTML parse mode
+                const message = `🛍 <b>New Shop Order</b>\n\n🛒 <b>Item:</b> ${currentProduct.title}\n💰 <b>Price:</b> ৳${currentProduct.price}\n\n👤 <b>Buyer:</b> @${telegramUser.username}\n🆔 <b>User ID:</b> <code>${telegramUser.id}</code>\n\n💳 <b>Paid via:</b> ${currentPaymentMethod.toUpperCase()}\n🧾 <b>TrxID:</b> <code>${trxId}</code>\n\n📅 <b>${new Date().toLocaleString()}</b>`;
                 
                 const formData = new FormData();
                 formData.append('chat_id', CHANNEL_ID);
-                formData.append('parse_mode', 'Markdown');
+                formData.append('parse_mode', 'HTML'); // Changed to HTML to fix "Can't parse entities" error
                 
                 let endpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
                 
@@ -763,7 +768,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if(!result.ok) throw new Error(result.description || "Telegram API Error");
                 
-                saveHistory({ coin: 'shop', amount: currentProduct.title, payout: currentProduct.price, time: Date.now() });
+                // Save history to Firebase (User Specific Path)
+                await saveHistory({ coin: 'shop', amount: currentProduct.title, payout: currentProduct.price, time: Date.now() });
+                
                 tg.showAlert('অর্ডার সফল হয়েছে! এডমিন শীঘ্রই ডেলিভারি দিবে।');
                 showPage('page-dashboard');
             } catch (err) { 
@@ -858,7 +865,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             if (!result.ok) throw new Error(result.description || "Failed to send.");
 
-            saveHistory({ coin: coinType, amount: amountK, payout, time: Date.now() });
+            // Save history to Firebase (User Specific Path)
+            await saveHistory({ coin: coinType, amount: amountK, payout, time: Date.now() });
+            
             tg.showAlert('Order Submitted Successfully!');
             e.target.reset();
             if(coinType !== 'top-coin') { $(`#${coinType}-upload-prompt`).classList.remove('hidden'); $(`#${coinType}-preview-container`).classList.add('hidden'); }
@@ -866,36 +875,52 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) { console.error(err); tg.showAlert(`Error: ${err.message}`); } finally { hideLoader(); }
     }
 
-    function saveHistory(item) {
-        let history = JSON.parse(localStorage.getItem('sellHistory') || '[]');
-        history.unshift(item);
-        const now = Date.now();
-        history = history.filter(h => now - h.time < 86400000); 
-        localStorage.setItem('sellHistory', JSON.stringify(history));
+    // --- NEW: Firebase History Logic ---
+    async function saveHistory(item) {
+        // Save to: users/[UID]/history
+        const historyRef = db.ref(`users/${telegramUser.id}/history`);
+        await historyRef.push(item);
     }
 
     function renderHistory() {
         const list = $('#history-list');
-        let history = JSON.parse(localStorage.getItem('sellHistory') || '[]');
-        const now = Date.now();
-        history = history.filter(h => now - h.time < 86400000);
-        localStorage.setItem('sellHistory', JSON.stringify(history));
+        list.innerHTML = '<div class="flex justify-center p-10"><div class="loader"></div></div>';
 
-        if(history.length === 0) { list.innerHTML = `<div class="flex flex-col items-center justify-center py-20 opacity-50"><span class="material-symbols-outlined text-6xl mb-2">history</span><p>No transactions yet.</p></div>`; return; }
+        const historyRef = db.ref(`users/${telegramUser.id}/history`);
         
-        list.innerHTML = history.map(h => {
-            let icon = 'monetization_on';
-            if(h.coin !== 'shop') icon = `<img src="./${h.coin === 'top-coin' ? 'top' : h.coin}.jpg" class="h-6 w-6 rounded-full">`;
-            else icon = `<span class="material-symbols-outlined text-primary">shopping_bag</span>`;
-            return `
-            <div class="bg-card-background p-4 rounded-xl flex justify-between items-center border border-gray-100 dark:border-gray-800 shadow-sm animate-[fadeIn_0.3s]">
-                <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">${icon}</div>
-                    <div><p class="font-bold uppercase text-sm line-clamp-1 max-w-[150px]">${h.coin.replace('-', ' ')}</p><p class="text-xs text-text-secondary">${new Date(h.time).toLocaleTimeString()}</p></div>
-                </div>
-                <div class="text-right"><p class="font-bold text-lg">${h.coin==='shop'?'Item':h.amount}</p><p class="text-xs font-bold text-primary">৳${h.payout}</p></div>
-            </div>`
-        }).join('');
+        // Listen for value once to render
+        historyRef.once('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) {
+                list.innerHTML = `<div class="flex flex-col items-center justify-center py-20 opacity-50"><span class="material-symbols-outlined text-6xl mb-2">history</span><p>No transactions yet.</p></div>`;
+                return;
+            }
+
+            const historyArray = Object.values(data).reverse(); // Newest first
+            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+            
+            // Filter last 24h
+            const validHistory = historyArray.filter(h => h.time > oneDayAgo);
+
+            if(validHistory.length === 0) {
+                 list.innerHTML = `<div class="flex flex-col items-center justify-center py-20 opacity-50"><span class="material-symbols-outlined text-6xl mb-2">history</span><p>No recent transactions.</p></div>`;
+                 return;
+            }
+
+            list.innerHTML = validHistory.map(h => {
+                let icon = 'monetization_on';
+                if(h.coin !== 'shop') icon = `<img src="./${h.coin === 'top-coin' ? 'top' : h.coin}.jpg" class="h-6 w-6 rounded-full">`;
+                else icon = `<span class="material-symbols-outlined text-primary">shopping_bag</span>`;
+                return `
+                <div class="bg-card-background p-4 rounded-xl flex justify-between items-center border border-gray-100 dark:border-gray-800 shadow-sm animate-[fadeIn_0.3s]">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">${icon}</div>
+                        <div><p class="font-bold uppercase text-sm line-clamp-1 max-w-[150px]">${h.coin.replace('-', ' ')}</p><p class="text-xs text-text-secondary">${new Date(h.time).toLocaleTimeString()}</p></div>
+                    </div>
+                    <div class="text-right"><p class="font-bold text-lg">${h.coin==='shop'?'Item':h.amount}</p><p class="text-xs font-bold text-primary">৳${h.payout}</p></div>
+                </div>`
+            }).join('');
+        });
     }
 
     function showPage(pageId) {
@@ -930,7 +955,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 $(`#${coin}-rates-display`).innerHTML = `<div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-gray-700"><div><p class="text-xs text-text-secondary">Low</p><p class="font-bold text-primary">৳${r.tier1}</p></div><div><p class="text-xs text-text-secondary">Mid</p><p class="font-bold text-primary">৳${r.tier2}</p></div><div><p class="text-xs text-text-secondary">High</p><p class="font-bold text-primary">৳${r.tier3}</p></div></div>`;
             });
 
-             // Load Admin Rates Inputs
              if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
                 const fillAdmin = (coin, prefix) => {
                     const r = marketRates[coin] || {tier1:0,tier2:0,tier3:0};
