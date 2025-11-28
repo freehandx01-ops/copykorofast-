@@ -37,39 +37,45 @@
     .payment-method-label { border: 2px solid transparent; transition: all 0.2s ease; background-color: rgba(128,128,128,0.1); }
     .payment-method-radio:checked + .payment-method-label { border-color: #00D27F; background-color: rgba(0, 210, 127, 0.15); box-shadow: 0 4px 12px rgba(0, 210, 127, 0.2); }
     
-    /* Gateway Themes */
-    .theme-bkash { background-color: #e2136e; color: white; }
-    .theme-nagad { background-color: #ec1d24; color: white; }
-    .text-bkash { color: #e2136e; }
-    .text-nagad { color: #ec1d24; }
-
     /* Battery Design for T&C */
     .battery-container { position: relative; padding-top: 1.5rem; }
     .battery-container::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 24px; height: 6px; background-color: currentColor; opacity: 0.5; border-radius: 4px 4px 0 0; }
     
-    /* Light/Dark Mode */
+    /* --- Light Mode (Default) --- */
     html.light body { background-color: #F7F9FC; color: #1c1e21; }
+    html.light .bg-background { background-color: #F7F9FC; }
+    html.light .text-text-primary { color: #111827; }
+    html.light .text-text-secondary { color: #6B7280; }
     html.light .bg-card-background { background-color: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     html.light .form-input { color: #111827; background-color: #FFFFFF; border: 1px solid #E5E7EB; }
     html.light .nav-btn { color: #9CA3AF; }
     html.light .nav-btn.text-primary { color: #00D27F; }
     
+    html.light .notice-box-amber { background-color: #FEF3C7; border: 1px solid #FCD34D; }
+    html.light .notice-text-amber-title { color: #92400E; }
+    html.light .notice-text-amber-body { color: #B45309; }
+    
+    html.light .notice-box-blue { background-color: #DBEAFE; border: 1px solid #93C5FD; }
+    html.light .notice-text-blue-title { color: #1E40AF; }
+    html.light .notice-text-blue-body { color: #1D4ED8; }
+
+    /* --- Dark Mode --- */
     html.dark body { background-color: #0F172A; color: #F8FAFC; }
+    html.dark .bg-background { background-color: #0F172A; }
+    html.dark .text-text-primary { color: #F8FAFC; }
+    html.dark .text-text-secondary { color: #94A3B8; }
     html.dark .bg-card-background { background-color: #1E293B; border: 1px solid #334155; }
     html.dark .form-input { color: #F8FAFC; background-color: #0F172A; border: 1px solid #334155; }
     html.dark .nav-btn { color: #64748B; }
     html.dark .nav-btn.text-primary { color: #00D27F; }
 
-    /* Notices */
-    html.light .notice-box-amber { background-color: #FEF3C7; border: 1px solid #FCD34D; }
-    html.light .notice-text-amber-title { color: #92400E; }
-    html.light .notice-box-blue { background-color: #DBEAFE; border: 1px solid #93C5FD; }
-    html.light .notice-text-blue-title { color: #1E40AF; }
-
     html.dark .notice-box-amber { background-color: rgba(120, 53, 15, 0.3); border: 1px solid rgba(217, 119, 6, 0.5); }
     html.dark .notice-text-amber-title { color: #F59E0B; }
+    html.dark .notice-text-amber-body { color: #FBBF24; }
+
     html.dark .notice-box-blue { background-color: rgba(30, 58, 138, 0.3); border: 1px solid rgba(37, 99, 235, 0.5); }
     html.dark .notice-text-blue-title { color: #3B82F6; }
+    html.dark .notice-text-blue-body { color: #60A5FA; }
   </style>
   <script id="tailwind-config">
     tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary": "#00D27F", "background": "#0F172A" }, fontFamily: { "display": ["Inter", "sans-serif"] } } } }
@@ -176,10 +182,10 @@
     <!-- SHOP MAIN PAGE -->
     <main id="page-shop" class="page flex-grow p-4 pb-28">
         <h1 class="text-2xl font-bold mb-2 mt-4">Premium Shop</h1>
-        <p class="text-text-secondary text-sm mb-6">Buy Premium VPNs & Tools instantly.</p>
+        <p class="text-text-secondary text-sm mb-4">Buy Premium VPNs & Tools instantly.</p>
         
-        <!-- Shop Grid -->
-        <div id="shop-container" class="grid grid-cols-2 gap-4">
+        <!-- Shop Grid (Adjusted for better zoom/view) -->
+        <div id="shop-container" class="grid grid-cols-2 gap-3">
             <!-- Products injected by JS -->
             <div class="col-span-2 flex flex-col items-center justify-center py-12 opacity-60">
                 <span class="material-symbols-outlined text-5xl mb-2">storefront</span>
@@ -189,34 +195,45 @@
     </main>
 
     <!-- PRODUCT DETAILS PAGE -->
-    <main id="page-product-details" class="page flex-grow p-4 pb-28 bg-background min-h-screen">
+    <main id="page-product-details" class="page flex-grow p-4 pb-32 bg-white dark:bg-slate-900 min-h-screen z-[55] absolute inset-0">
         <header class="flex items-center py-2 mb-4">
-            <button class="nav-btn-internal text-text-primary flex size-10 items-center justify-center -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800" data-page="page-shop">
+            <button class="nav-btn-internal text-gray-800 dark:text-white flex size-10 items-center justify-center -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800" data-page="page-shop">
                 <span class="material-symbols-outlined text-2xl">arrow_back</span>
             </button>
-            <h1 class="text-xl font-bold flex-1 text-center pr-8">Product Details</h1>
+            <h1 class="text-xl font-bold flex-1 text-center pr-8 text-gray-900 dark:text-white">Product Details</h1>
         </header>
 
         <div class="flex flex-col gap-5">
-            <div class="w-full aspect-video bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm">
+            <!-- Image with white background protection -->
+            <div class="w-full aspect-video bg-gray-100 dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
                 <img id="detail-image" src="" class="w-full h-full object-cover">
             </div>
-            <div>
-                <h2 id="detail-title" class="text-2xl font-extrabold text-text-primary mb-1">...</h2>
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-bold uppercase">Premium</span>
-                    <span class="text-xs text-text-secondary">Instant Delivery</span>
-                </div>
-                <p id="detail-price" class="text-3xl font-bold text-primary mb-6">৳0.00</p>
+
+            <div class="px-1">
+                <h2 id="detail-title" class="text-2xl font-extrabold text-gray-900 dark:text-white mb-2 leading-tight">...</h2>
                 
-                <button id="detail-btn-buy" class="w-full bg-primary text-background font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all text-lg flex items-center justify-center gap-2">
+                <div class="flex items-center gap-2 mb-5">
+                    <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Premium</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Instant Delivery</span>
+                </div>
+                
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Price</p>
+                        <p id="detail-price" class="text-3xl font-extrabold text-primary">৳0.00</p>
+                    </div>
+                </div>
+                
+                <button id="detail-btn-buy" class="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all text-lg flex items-center justify-center gap-2 hover:bg-emerald-500">
                     <span>Order Now</span>
                     <span class="material-symbols-outlined">shopping_cart_checkout</span>
                 </button>
             </div>
-            <hr class="border-gray-200 dark:border-gray-800 my-2">
+
+            <hr class="border-gray-100 dark:border-gray-800 my-2">
+
             <div>
-                <h3 class="font-bold text-lg mb-4 text-text-primary">More Products</h3>
+                <h3 class="font-bold text-lg mb-4 text-gray-900 dark:text-white">More Products</h3>
                 <div id="related-products-grid" class="grid grid-cols-2 gap-3">
                     <!-- Related items -->
                 </div>
@@ -225,85 +242,86 @@
     </main>
 
     <!-- PROFESSIONAL PAYMENT GATEWAY PAGE -->
-    <main id="page-shop-checkout" class="page flex-grow min-h-screen bg-gray-50 z-[60] absolute inset-0 font-sans">
+    <main id="page-shop-checkout" class="page flex-grow min-h-screen bg-gray-50 z-[60] absolute inset-0 font-sans overflow-y-auto">
         
         <!-- White Header Section -->
-        <div class="bg-white px-5 pt-8 pb-6 rounded-b-[2rem] shadow-sm relative">
-             <button class="nav-btn-internal absolute top-8 left-4 text-gray-400 p-1 hover:text-gray-800 transition" data-page="page-shop">
+        <div class="bg-white px-5 pt-6 pb-6 rounded-b-[2rem] shadow-sm relative sticky top-0 z-10">
+             <button class="nav-btn-internal absolute top-6 left-4 text-gray-400 p-2 hover:text-gray-800 transition" data-page="page-shop">
                 <span class="material-symbols-outlined">arrow_back_ios_new</span>
             </button>
             
             <!-- Gateway Logo Switcher -->
-            <div class="flex justify-center mb-6">
-                <img id="gateway-logo-img" src="./bkash.jpg" class="h-12 object-contain">
+            <div class="flex justify-center mb-4">
+                <img id="gateway-logo-img" src="./bkash.jpg" class="h-10 object-contain">
             </div>
 
             <!-- Method Selector Pills -->
-            <div class="flex justify-center gap-3 mb-6">
+            <div class="flex justify-center gap-3 mb-4">
                  <button id="btn-select-bkash" class="flex items-center gap-2 px-4 py-2 rounded-full border border-pink-200 bg-pink-50 text-pink-600 font-bold text-sm active:scale-95 transition-transform">
-                    <div class="w-4 h-4 rounded-full bg-pink-600"></div> Bkash
+                    <div class="w-3 h-3 rounded-full bg-pink-600"></div> Bkash
                  </button>
                  <button id="btn-select-nagad" class="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white text-gray-500 font-bold text-sm active:scale-95 transition-transform">
-                    <div class="w-4 h-4 rounded-full border border-gray-400"></div> Nagad
+                    <div class="w-3 h-3 rounded-full border border-gray-400"></div> Nagad
                  </button>
             </div>
 
             <!-- Amount Section -->
             <div class="flex items-center justify-center gap-4 border border-gray-100 p-3 rounded-2xl shadow-sm bg-white">
-                <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                    <img src="./coin.jpg" class="w-8 h-8 rounded-full object-cover">
+                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+                    <img src="./coin.jpg" class="w-full h-full object-cover">
                 </div>
                 <div>
-                    <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Payment</p>
-                    <h2 id="checkout-amount" class="text-2xl font-extrabold text-gray-800">৳0.00</h2>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Payment Amount</p>
+                    <h2 id="checkout-amount" class="text-xl font-extrabold text-gray-800">৳0.00</h2>
                 </div>
             </div>
         </div>
 
         <!-- Colored Card Section (Pink/Orange) -->
-        <div id="gateway-body" class="bg-[#e2136e] min-h-[60vh] -mt-5 pt-10 px-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-colors duration-300 relative">
+        <div id="gateway-body" class="bg-[#e2136e] min-h-screen -mt-6 pt-12 px-5 pb-32 rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-colors duration-300 relative flex flex-col">
             
-            <h3 class="text-white text-center font-bold text-lg mb-6">ট্রানজেকশন আইডি দিন</h3>
+            <h3 class="text-white text-center font-bold text-base mb-6 opacity-90">ট্রানজেকশন আইডি দিন</h3>
 
-            <div class="space-y-6">
+            <div class="space-y-6 flex-1">
                 <!-- Input Field -->
-                <input id="shop-trx-id" type="text" placeholder="ট্রানজেকশন আইডি দিন" class="w-full bg-white text-center py-4 rounded-xl text-gray-800 font-bold outline-none shadow-lg placeholder:text-gray-400 placeholder:font-normal">
+                <input id="shop-trx-id" type="text" placeholder="ট্রানজেকশন আইডি" class="w-full bg-white text-center py-4 rounded-xl text-gray-800 font-bold text-lg outline-none shadow-lg placeholder:text-gray-400 placeholder:font-normal placeholder:text-base">
 
                 <!-- Instructions List -->
-                <ul class="text-white/90 text-sm space-y-3 pl-2">
-                    <li class="flex items-start gap-3">
-                        <div class="w-1.5 h-1.5 rounded-full bg-white mt-2 shrink-0"></div>
-                        <p id="instruction-dial">*247# ডায়াল করে আপনার <span id="gateway-name-text">Bkash</span> মোবাইল মেনুতে যান অথবা অ্যাপে যান।</p>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <div class="w-1.5 h-1.5 rounded-full bg-white mt-2 shrink-0"></div>
-                        <p>"Send Money" -এ ক্লিক করুন।</p>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <div class="w-1.5 h-1.5 rounded-full bg-white mt-2 shrink-0"></div>
-                        <div>
-                            <p class="mb-1">প্রাপক নম্বর হিসেবে এই নম্বরটি লিখুনঃ</p>
-                            <div class="flex items-center gap-2 bg-black/20 p-2 rounded-lg backdrop-blur-sm w-fit">
-                                <span id="shop-wallet-number" class="font-mono font-bold text-lg text-yellow-300">Loading...</span>
-                                <button id="btn-copy-shop-number" class="text-white hover:text-yellow-300"><span class="material-symbols-outlined text-lg">content_copy</span></button>
+                <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-sm border border-white/10">
+                    <ul class="text-white/95 text-xs space-y-3 pl-1 leading-relaxed font-medium">
+                        <li class="flex items-start gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
+                            <p id="instruction-dial">*247# ডায়াল করে আপনার <span id="gateway-name-text">Bkash</span> মোবাইল মেনুতে যান অথবা অ্যাপে যান।</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
+                            <p>"Send Money" -এ ক্লিক করুন।</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
+                            <div class="w-full">
+                                <p class="mb-1.5 opacity-90">প্রাপক নম্বর হিসেবে এই নম্বরটি লিখুনঃ</p>
+                                <div class="flex items-center justify-between bg-black/20 p-2.5 rounded-lg w-full">
+                                    <span id="shop-wallet-number" class="font-mono font-bold text-base text-yellow-300 tracking-wider">Loading...</span>
+                                    <button id="btn-copy-shop-number" class="text-white bg-white/20 p-1 rounded hover:bg-white/30 active:scale-90 transition"><span class="material-symbols-outlined text-base">content_copy</span></button>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <div class="w-1.5 h-1.5 rounded-full bg-white mt-2 shrink-0"></div>
-                        <p>টাকার পরিমাণঃ <span id="instruction-amount" class="font-bold text-yellow-300">0</span></p>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <div class="w-1.5 h-1.5 rounded-full bg-white mt-2 shrink-0"></div>
-                        <p>এখন উপরের বক্সে আপনার Transaction ID দিন এবং নিচের VERIFY বাটনে ক্লিক করুন।</p>
-                    </li>
-                </ul>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
+                            <p>টাকার পরিমাণঃ <span id="instruction-amount" class="font-bold text-yellow-300 text-sm">0</span></p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-white mt-1.5 shrink-0"></div>
+                            <p>এখন উপরের বক্সে আপনার Transaction ID দিন এবং নিচের VERIFY বাটনে ক্লিক করুন।</p>
+                        </li>
+                    </ul>
+                </div>
 
-                <!-- Verify Button -->
-                <button id="btn-verify-payment" class="w-full bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold py-4 rounded-full shadow-lg active:scale-[0.98] transition-all text-lg mt-4 flex items-center justify-center gap-2 uppercase tracking-wide backdrop-blur-md">
+                <!-- Verify Button (Made clearly visible) -->
+                <button id="btn-verify-payment" class="w-full bg-white text-[#e2136e] font-extrabold py-4 rounded-full shadow-xl active:scale-[0.98] transition-all text-lg mb-10 flex items-center justify-center gap-2 uppercase tracking-wide">
                     VERIFY
                 </button>
-                <div class="h-10"></div>
             </div>
         </div>
     </main>
@@ -600,17 +618,17 @@ document.addEventListener('DOMContentLoaded', () => {
             keys.forEach(key => {
                 const p = products[key];
                 
-                // User View
+                // User View (Adjusted size/padding)
                 const item = document.createElement('div');
-                item.className = 'bg-card-background rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full active:scale-[0.98] transition-all cursor-pointer group';
+                item.className = 'bg-card-background rounded-2xl p-2.5 shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full active:scale-[0.98] transition-all cursor-pointer group hover:shadow-md';
                 item.innerHTML = `
-                    <div class="h-32 w-full bg-gray-100 dark:bg-gray-800 rounded-xl mb-3 overflow-hidden relative">
+                    <div class="h-28 w-full bg-gray-100 dark:bg-gray-800 rounded-xl mb-2 overflow-hidden relative">
                         <img src="${p.image}" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
                     </div>
-                    <h3 class="font-bold text-sm text-text-primary line-clamp-2 leading-tight flex-1 mb-2">${p.title}</h3>
+                    <h3 class="font-bold text-xs text-text-primary line-clamp-2 leading-tight flex-1 mb-2">${p.title}</h3>
                     <div class="mt-auto flex items-center justify-between">
-                        <span class="font-bold text-lg text-primary">৳${p.price}</span>
-                        <button class="buy-btn bg-primary text-background text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm z-10">ORDER</button>
+                        <span class="font-bold text-base text-primary">৳${p.price}</span>
+                        <button class="buy-btn bg-primary text-background text-[10px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm z-10">ORDER</button>
                     </div>
                 `;
                 
@@ -649,8 +667,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if(k === key) return; 
             const p = allProducts[k];
             const div = document.createElement('div');
-            div.className = 'bg-card-background rounded-xl p-2 shadow-sm border border-gray-100 dark:border-gray-800 active:scale-95 transition-transform cursor-pointer';
-            div.innerHTML = `<div class="h-20 w-full bg-gray-100 dark:bg-gray-800 rounded-lg mb-2 overflow-hidden"><img src="${p.image}" class="w-full h-full object-cover"></div><p class="text-xs font-bold line-clamp-1">${p.title}</p><p class="text-xs text-primary font-bold">৳${p.price}</p>`;
+            div.className = 'bg-gray-50 dark:bg-slate-800 rounded-xl p-2 shadow-sm border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform cursor-pointer';
+            div.innerHTML = `<div class="h-20 w-full bg-gray-200 dark:bg-gray-700 rounded-lg mb-2 overflow-hidden"><img src="${p.image}" class="w-full h-full object-cover"></div><p class="text-xs font-bold line-clamp-1 text-gray-800 dark:text-white">${p.title}</p><p class="text-xs text-primary font-bold">৳${p.price}</p>`;
             div.onclick = () => openProductDetails(k, p);
             grid.appendChild(div);
         });
@@ -680,22 +698,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const bkashBtn = $('#btn-select-bkash');
         const nagadBtn = $('#btn-select-nagad');
         const walletDisplay = $('#shop-wallet-number');
-        const instructionDial = $('#instruction-dial');
         const gatewayName = $('#gateway-name-text');
+        const verifyBtn = $('#btn-verify-payment');
 
         if (method === 'bkash') {
-            body.className = 'bg-[#e2136e] min-h-[60vh] -mt-5 pt-10 px-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-colors duration-300 relative';
+            body.className = 'bg-[#e2136e] min-h-screen -mt-6 pt-12 px-5 pb-32 rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-colors duration-300 relative flex flex-col';
             logo.src = './bkash.jpg';
             gatewayName.textContent = 'Bkash';
+            verifyBtn.className = 'w-full bg-white text-[#e2136e] font-extrabold py-4 rounded-full shadow-xl active:scale-[0.98] transition-all text-lg mb-10 flex items-center justify-center gap-2 uppercase tracking-wide';
             
             bkashBtn.className = 'flex items-center gap-2 px-4 py-2 rounded-full border border-pink-200 bg-pink-50 text-pink-600 font-bold text-sm active:scale-95 transition-transform shadow-inner';
             nagadBtn.className = 'flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white text-gray-500 font-bold text-sm active:scale-95 transition-transform opacity-60';
             
             walletDisplay.textContent = shopWallets.bkash || "Not Set";
         } else {
-            body.className = 'bg-[#ec1d24] min-h-[60vh] -mt-5 pt-10 px-6 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-colors duration-300 relative';
+            body.className = 'bg-[#ec1d24] min-h-screen -mt-6 pt-12 px-5 pb-32 rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.1)] transition-colors duration-300 relative flex flex-col';
             logo.src = './nagad.jpg';
             gatewayName.textContent = 'Nagad';
+            verifyBtn.className = 'w-full bg-white text-[#ec1d24] font-extrabold py-4 rounded-full shadow-xl active:scale-[0.98] transition-all text-lg mb-10 flex items-center justify-center gap-2 uppercase tracking-wide';
             
             bkashBtn.className = 'flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white text-gray-500 font-bold text-sm active:scale-95 transition-transform opacity-60';
             nagadBtn.className = 'flex items-center gap-2 px-4 py-2 rounded-full border border-orange-200 bg-orange-50 text-orange-600 font-bold text-sm active:scale-95 transition-transform shadow-inner';
@@ -710,28 +730,36 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!trxId || trxId.length < 6) { tg.showAlert("সঠিক ট্রানজেকশন আইডি দিন"); return; }
         
-        // Animation Start
+        // Animation
         const originalBtnContent = btn.innerHTML;
+        const originalColorClass = btn.className;
         btn.innerHTML = `<span class="btn-loader"></span> Checking...`;
         btn.disabled = true;
 
         setTimeout(async () => {
             try {
+                // FIXED: Explicitly construct message string
                 const message = `🛍 *New Shop Order*\n\n🛒 *Item:* ${currentProduct.title}\n💰 *Price:* ৳${currentProduct.price}\n\n👤 *Buyer:* @${telegramUser.username}\n🆔 *User ID:* \`${telegramUser.id}\`\n\n💳 *Paid via:* ${currentPaymentMethod.toUpperCase()}\n🧾 *TrxID:* \`${trxId}\`\n\n📅 *${new Date().toLocaleString()}*`;
                 
                 const formData = new FormData();
                 formData.append('chat_id', CHANNEL_ID);
+                formData.append('parse_mode', 'Markdown');
                 
-                if (currentProduct.image) {
+                let endpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                
+                // If product has image, use sendPhoto, else use sendMessage
+                if (currentProduct.image && currentProduct.image.startsWith('http')) {
+                    endpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
                     formData.append('photo', currentProduct.image);
                     formData.append('caption', message);
-                    formData.append('parse_mode', 'Markdown');
-                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
                 } else {
                     formData.append('text', message);
-                    formData.append('parse_mode', 'Markdown');
-                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { method: 'POST', body: formData });
                 }
+                
+                const response = await fetch(endpoint, { method: 'POST', body: formData });
+                const result = await response.json();
+                
+                if(!result.ok) throw new Error(result.description || "Telegram API Error");
                 
                 saveHistory({ coin: 'shop', amount: currentProduct.title, payout: currentProduct.price, time: Date.now() });
                 tg.showAlert('অর্ডার সফল হয়েছে! এডমিন শীঘ্রই ডেলিভারি দিবে।');
@@ -741,9 +769,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 tg.showAlert(`Error: ${err.message}`); 
             } finally {
                 btn.innerHTML = originalBtnContent;
+                btn.className = originalColorClass;
                 btn.disabled = false;
             }
-        }, 2000); // 2 Second fake delay for "Checking" animation
+        }, 2000); 
     }
 
     async function handleAddProduct(e) {
@@ -763,7 +792,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(confirm('Delete this product?')) { await db.ref(`products/${key}`).remove(); tg.showAlert('Product Deleted'); }
     }
 
-    // --- Core Logic (Unchanged from prev working version) ---
+    // --- Core Logic ---
     function calculatePayout(coinType) {
         const amount = parseFloat($(`#${coinType}-amount-input`).value) || 0;
         let rate = 0;
