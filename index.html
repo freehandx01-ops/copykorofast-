@@ -57,6 +57,10 @@
     html.light .notice-box-amber { background-color: #FEF3C7; border: 1px solid #FCD34D; }
     html.light .notice-text-amber-title { color: #92400E; }
     html.light .notice-text-amber-body { color: #B45309; }
+    
+    html.light .notice-box-blue { background-color: #DBEAFE; border: 1px solid #93C5FD; }
+    html.light .notice-text-blue-title { color: #1E40AF; }
+    html.light .notice-text-blue-body { color: #1D4ED8; }
 
     /* --- Dark Mode --- */
     html.dark body { background-color: #0F172A; color: #F8FAFC; }
@@ -71,6 +75,10 @@
     html.dark .notice-box-amber { background-color: rgba(120, 53, 15, 0.3); border: 1px solid rgba(217, 119, 6, 0.5); }
     html.dark .notice-text-amber-title { color: #F59E0B; }
     html.dark .notice-text-amber-body { color: #FBBF24; }
+
+    html.dark .notice-box-blue { background-color: rgba(30, 58, 138, 0.3); border: 1px solid rgba(37, 99, 235, 0.5); }
+    html.dark .notice-text-blue-title { color: #3B82F6; }
+    html.dark .notice-text-blue-body { color: #60A5FA; }
   </style>
   <script id="tailwind-config">
     tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary": "#00D27F", "background": "#0F172A" }, fontFamily: { "display": ["Inter", "sans-serif"] } } } }
@@ -153,6 +161,14 @@
                 </ul>
             </div>
         </div>
+
+        <!-- RESTORED: How it works -->
+        <div class="col-span-1 md:col-span-2">
+            <div class="notice-box-blue p-5 rounded-2xl shadow-sm">
+                <h3 class="font-bold notice-text-blue-title mb-1 text-lg">How it works</h3>
+                <p class="text-sm notice-text-blue-body font-medium">When you submit a sell request, This is done by admins through manual verification and payment is made within 15 minutes.</p>
+            </div>
+        </div>
       </div>
     </main>
 
@@ -167,7 +183,7 @@
         </div>
     </main>
 
-    <!-- SHOP PAGE (NEW) -->
+    <!-- SHOP PAGE -->
     <main id="page-shop" class="page flex-grow p-4 pb-28">
         <h1 class="text-2xl font-bold mb-2 mt-4">Premium Shop</h1>
         <p class="text-text-secondary text-sm mb-6">Buy Premium VPNs & Tools instantly.</p>
@@ -209,7 +225,6 @@
 
             <!-- Payment Details Form -->
             <div class="space-y-6">
-                
                 <!-- Instruction Box -->
                 <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
                     <p class="text-sm text-gray-500 mb-1">Send Money to this Personal Number</p>
@@ -236,7 +251,7 @@
         </div>
     </main>
 
-    <!-- Sell Pages (Hidden by default) -->
+    <!-- Sell Pages -->
     <main id="page-sell-niva" class="page flex-grow p-4 pb-28">
         <div class="coin-system-notice hidden min-h-screen flex flex-col items-center justify-center p-6 text-center"><div class="w-full max-w-md"><h1 class="text-2xl font-bold text-text-primary mb-3">Unavailable</h1><p class="text-text-secondary">This coin is currently not accepting orders.</p><button class="nav-btn-internal mt-8 bg-primary text-background font-bold py-3 px-6 rounded-lg w-full" data-page="page-dashboard">Go Back</button></div></div>
         <div class="coin-system-content">
@@ -261,6 +276,23 @@
             <div class="min-w-0">
                 <p id="profile-name" class="text-xl font-bold truncate text-text-primary">...</p>
                 <p id="profile-id" class="text-xs text-text-secondary break-all font-mono mt-1">...</p>
+            </div>
+        </section>
+
+        <!-- RESTORED: Telegram Channel Notice -->
+        <section class="rounded-2xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 p-5">
+            <div class="flex items-start gap-4">
+                <div class="bg-white rounded-full p-1 shadow-sm shrink-0">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="w-10 h-10" alt="Telegram">
+                </div>
+                <div>
+                    <h3 class="font-bold text-blue-800 dark:text-blue-400">Join our Channel</h3>
+                    <p class="text-sm text-blue-700 dark:text-blue-300 mt-1 mb-3">যে কোন লেনদেনের পূর্বে চ্যানেলে বিস্তারিত দেখে নিন।</p>
+                    <a href="https://t.me/earno_vate_earn" target="_blank" class="inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <span>Open Channel</span>
+                        <span class="material-symbols-outlined text-base">open_in_new</span>
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -290,6 +322,38 @@
               <!-- System Status -->
               <fieldset class="border border-slate-700 p-4 rounded-xl"><legend class="px-2 font-bold text-primary text-sm">App Status</legend>
                   <div class="flex items-center justify-between mb-4"><div class="flex items-center gap-2"><span id="system-status-icon" class="material-symbols-outlined"></span><span id="system-status-text" class="font-medium"></span></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="admin-system-status-toggle" class="sr-only peer"><div class="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div></label></div>
+              </fieldset>
+
+              <!-- RESTORED: Coin Rates Admin -->
+              <fieldset class="border border-slate-700 p-4 rounded-xl">
+                  <legend class="px-2 font-bold text-primary text-sm">Coin Rates (Per 1k)</legend>
+                  
+                  <div class="mb-4 bg-emerald-500/10 p-2 rounded">
+                      <p class="text-xs font-bold text-emerald-500 mb-2">Niva (Tiered)</p>
+                      <div class="grid grid-cols-3 gap-2">
+                          <div><label class="text-[10px] text-text-secondary">10k+</label><input id="admin-niva-rate-1" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">50k+</label><input id="admin-niva-rate-2" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-niva-rate-3" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                      </div>
+                  </div>
+                  
+                  <div class="mb-4 bg-purple-500/10 p-2 rounded">
+                      <p class="text-xs font-bold text-purple-500 mb-2">NS (Tiered)</p>
+                      <div class="grid grid-cols-3 gap-2">
+                          <div><label class="text-[10px] text-text-secondary">10k+</label><input id="admin-ns-rate-1" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">50k+</label><input id="admin-ns-rate-2" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">100k+</label><input id="admin-ns-rate-3" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                      </div>
+                  </div>
+
+                  <div class="mb-4 bg-amber-500/10 p-2 rounded">
+                      <p class="text-xs font-bold text-amber-500 mb-2">Fira (Tiered)</p>
+                      <div class="grid grid-cols-3 gap-2">
+                          <div><label class="text-[10px] text-text-secondary">Low</label><input id="admin-fira-rate-1" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">Mid</label><input id="admin-fira-rate-2" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                          <div><label class="text-[10px] text-text-secondary">High</label><input id="admin-fira-rate-3" type="number" step="any" class="form-input w-full rounded text-sm px-1 py-1"></div>
+                      </div>
+                  </div>
               </fieldset>
 
               <!-- SHOP WALLETS -->
@@ -329,12 +393,11 @@
       <div class="mt-4"><div class="battery-container bg-card-background p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm"><div id="terms-content" class="text-sm text-text-secondary whitespace-pre-wrap leading-relaxed">Loading...</div></div></div>
     </main>
 
-    <!-- Bottom Navigation (FIXED GRID AND BUTTONS) -->
+    <!-- Bottom Navigation -->
     <div class="fixed bottom-0 left-0 right-0 h-20 bg-card-background/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 z-50">
       <div class="grid h-full max-w-lg grid-cols-4 mx-auto">
         <button class="nav-btn inline-flex flex-col items-center justify-center px-1 active:scale-95 transition-transform" data-page="page-dashboard" data-nav="dashboard"><span class="material-symbols-outlined text-2xl mb-1">dashboard</span><span class="text-[10px] font-medium">Home</span></button>
         <button class="nav-btn inline-flex flex-col items-center justify-center px-1 active:scale-95 transition-transform" data-page="page-history" data-nav="history"><span class="material-symbols-outlined text-2xl mb-1">history</span><span class="text-[10px] font-medium">History</span></button>
-        <!-- Shop Button Added Here -->
         <button class="nav-btn inline-flex flex-col items-center justify-center px-1 active:scale-95 transition-transform" data-page="page-shop" data-nav="shop"><span class="material-symbols-outlined text-2xl mb-1">storefront</span><span class="text-[10px] font-medium">Shop</span></button>
         <button class="nav-btn inline-flex flex-col items-center justify-center px-1 active:scale-95 transition-transform" data-page="page-profile" data-nav="profile"><span class="material-symbols-outlined text-2xl mb-1">person</span><span class="text-[10px] font-medium">Profile</span></button>
       </div>
@@ -477,7 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // User View
                 const item = document.createElement('div');
-                item.className = 'bg-card-background rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full active:scale-[0.98] transition-all';
+                item.className = 'bg-card-background rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col h-full active:scale-[0.98] transition-all cursor-pointer';
                 item.innerHTML = `
                     <div class="h-32 w-full bg-gray-100 dark:bg-gray-800 rounded-xl mb-3 overflow-hidden">
                         <img src="${p.image}" class="h-full w-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
@@ -489,7 +552,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="bg-primary text-background text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">ORDER</button>
                     </div>
                 `;
-                item.onclick = () => initiateOrder(key, p);
+                // FIX: Click Event
+                item.addEventListener('click', () => initiateOrder(key, p));
                 container.appendChild(item);
 
                 // Admin View
@@ -710,6 +774,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const r = marketRates[coin] || {tier1:0,tier2:0,tier3:0};
                 $(`#${coin}-rates-display`).innerHTML = `<div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-gray-700"><div><p class="text-xs text-text-secondary">Low</p><p class="font-bold text-primary">৳${r.tier1}</p></div><div><p class="text-xs text-text-secondary">Mid</p><p class="font-bold text-primary">৳${r.tier2}</p></div><div><p class="text-xs text-text-secondary">High</p><p class="font-bold text-primary">৳${r.tier3}</p></div></div>`;
             });
+
+             // Load Admin Rates Inputs
+             if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
+                const fillAdmin = (coin, prefix) => {
+                    const r = marketRates[coin] || {tier1:0,tier2:0,tier3:0};
+                    $(`#${prefix}-1`).value = r.tier1;
+                    $(`#${prefix}-2`).value = r.tier2;
+                    $(`#${prefix}-3`).value = r.tier3;
+                }
+                fillAdmin('niva', 'admin-niva-rate');
+                fillAdmin('ns', 'admin-ns-rate');
+                fillAdmin('fira', 'admin-fira-rate');
+             }
         });
     }
 
@@ -734,6 +811,20 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         showLoader('Saving...');
         try {
+            const getRates = (prefix) => ({
+                tier1: parseFloat($(`#${prefix}-1`).value) || 0,
+                tier2: parseFloat($(`#${prefix}-2`).value) || 0,
+                tier3: parseFloat($(`#${prefix}-3`).value) || 0,
+            });
+
+            // Update Rates
+            await db.ref('rates').update({
+                niva: getRates('admin-niva-rate'),
+                ns: getRates('admin-ns-rate'),
+                fira: getRates('admin-fira-rate'),
+            });
+
+            // Update Settings
             await db.ref('settings').update({
                 systemStatus: $('#admin-system-status-toggle').checked ? 'on' : 'off',
                 shopWallets: { bkash: $('#admin-shop-bkash').value, nagad: $('#admin-shop-nagad').value }
