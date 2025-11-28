@@ -27,6 +27,14 @@
     
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* Heartbeat Animation for Order Button */
+    @keyframes heartbeat {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 210, 127, 0.7); }
+        50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(0, 210, 127, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 210, 127, 0); }
+    }
+    .animate-heartbeat { animation: heartbeat 1.5s infinite; }
+
     .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #00D27F; width: 32px; height: 32px; animation: spin 0.8s linear infinite; }
     .btn-loader { border: 2px solid #ffffff; border-radius: 50%; border-top: 2px solid transparent; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; }
 
@@ -184,7 +192,7 @@
         <h1 class="text-2xl font-bold mb-2 mt-4">Premium Shop</h1>
         <p class="text-text-secondary text-sm mb-4">Buy Premium VPNs & Tools instantly.</p>
         
-        <!-- Shop Grid (Adjusted for better zoom/view) -->
+        <!-- Shop Grid (Zoomed Out / Smaller) -->
         <div id="shop-container" class="grid grid-cols-2 gap-3">
             <!-- Products injected by JS -->
             <div class="col-span-2 flex flex-col items-center justify-center py-12 opacity-60">
@@ -194,8 +202,8 @@
         </div>
     </main>
 
-    <!-- PRODUCT DETAILS PAGE -->
-    <main id="page-product-details" class="page flex-grow p-4 pb-32 bg-white dark:bg-slate-900 min-h-screen z-[55] absolute inset-0">
+    <!-- PRODUCT DETAILS PAGE (FIXED SCROLL & UI) -->
+    <main id="page-product-details" class="page flex-grow p-4 pb-32 bg-white dark:bg-slate-900 min-h-screen z-[55] absolute inset-0 overflow-y-auto">
         <header class="flex items-center py-2 mb-4">
             <button class="nav-btn-internal text-gray-800 dark:text-white flex size-10 items-center justify-center -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800" data-page="page-shop">
                 <span class="material-symbols-outlined text-2xl">arrow_back</span>
@@ -204,7 +212,7 @@
         </header>
 
         <div class="flex flex-col gap-5">
-            <!-- Image with white background protection -->
+            <!-- Image -->
             <div class="w-full aspect-video bg-gray-100 dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700">
                 <img id="detail-image" src="" class="w-full h-full object-cover">
             </div>
@@ -224,7 +232,8 @@
                     </div>
                 </div>
                 
-                <button id="detail-btn-buy" class="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all text-lg flex items-center justify-center gap-2 hover:bg-emerald-500">
+                <!-- Animated Order Button -->
+                <button id="detail-btn-buy" class="animate-heartbeat w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all text-lg flex items-center justify-center gap-2 hover:bg-emerald-500">
                     <span>Order Now</span>
                     <span class="material-symbols-outlined">shopping_cart_checkout</span>
                 </button>
@@ -238,6 +247,9 @@
                     <!-- Related items -->
                 </div>
             </div>
+            
+            <!-- Extra space for scroll -->
+            <div class="h-20"></div>
         </div>
     </main>
 
@@ -318,10 +330,11 @@
                     </ul>
                 </div>
 
-                <!-- Verify Button (Made clearly visible) -->
+                <!-- Verify Button -->
                 <button id="btn-verify-payment" class="w-full bg-white text-[#e2136e] font-extrabold py-4 rounded-full shadow-xl active:scale-[0.98] transition-all text-lg mb-10 flex items-center justify-center gap-2 uppercase tracking-wide">
                     VERIFY
                 </button>
+                <div class="h-20"></div>
             </div>
         </div>
     </main>
@@ -738,7 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(async () => {
             try {
-                // FIXED: Explicitly construct message string
+                // Construct message including User's Telegram Username
                 const message = `🛍 *New Shop Order*\n\n🛒 *Item:* ${currentProduct.title}\n💰 *Price:* ৳${currentProduct.price}\n\n👤 *Buyer:* @${telegramUser.username}\n🆔 *User ID:* \`${telegramUser.id}\`\n\n💳 *Paid via:* ${currentPaymentMethod.toUpperCase()}\n🧾 *TrxID:* \`${trxId}\`\n\n📅 *${new Date().toLocaleString()}*`;
                 
                 const formData = new FormData();
@@ -747,7 +760,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 let endpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
                 
-                // If product has image, use sendPhoto, else use sendMessage
                 if (currentProduct.image && currentProduct.image.startsWith('http')) {
                     endpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
                     formData.append('photo', currentProduct.image);
@@ -761,7 +773,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if(!result.ok) throw new Error(result.description || "Telegram API Error");
                 
-                saveHistory({ coin: 'shop', amount: currentProduct.title, payout: currentProduct.price, time: Date.now() });
+                // Save history to Firebase (User Specific Path)
+                await saveHistory({ coin: 'shop', amount: currentProduct.title, payout: currentProduct.price, time: Date.now() });
+                
                 tg.showAlert('অর্ডার সফল হয়েছে! এডমিন শীঘ্রই ডেলিভারি দিবে।');
                 showPage('page-dashboard');
             } catch (err) { 
@@ -856,7 +870,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             if (!result.ok) throw new Error(result.description || "Failed to send.");
 
-            saveHistory({ coin: coinType, amount: amountK, payout, time: Date.now() });
+            // Save history to Firebase (User Specific Path)
+            await saveHistory({ coin: coinType, amount: amountK, payout, time: Date.now() });
+            
             tg.showAlert('Order Submitted Successfully!');
             e.target.reset();
             if(coinType !== 'top-coin') { $(`#${coinType}-upload-prompt`).classList.remove('hidden'); $(`#${coinType}-preview-container`).classList.add('hidden'); }
@@ -864,36 +880,52 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) { console.error(err); tg.showAlert(`Error: ${err.message}`); } finally { hideLoader(); }
     }
 
-    function saveHistory(item) {
-        let history = JSON.parse(localStorage.getItem('sellHistory') || '[]');
-        history.unshift(item);
-        const now = Date.now();
-        history = history.filter(h => now - h.time < 86400000); 
-        localStorage.setItem('sellHistory', JSON.stringify(history));
+    // --- NEW: Firebase History Logic ---
+    async function saveHistory(item) {
+        // Save to: users/[UID]/history
+        const historyRef = db.ref(`users/${telegramUser.id}/history`);
+        await historyRef.push(item);
     }
 
     function renderHistory() {
         const list = $('#history-list');
-        let history = JSON.parse(localStorage.getItem('sellHistory') || '[]');
-        const now = Date.now();
-        history = history.filter(h => now - h.time < 86400000);
-        localStorage.setItem('sellHistory', JSON.stringify(history));
+        list.innerHTML = '<div class="flex justify-center p-10"><div class="loader"></div></div>';
 
-        if(history.length === 0) { list.innerHTML = `<div class="flex flex-col items-center justify-center py-20 opacity-50"><span class="material-symbols-outlined text-6xl mb-2">history</span><p>No transactions yet.</p></div>`; return; }
+        const historyRef = db.ref(`users/${telegramUser.id}/history`);
         
-        list.innerHTML = history.map(h => {
-            let icon = 'monetization_on';
-            if(h.coin !== 'shop') icon = `<img src="./${h.coin === 'top-coin' ? 'top' : h.coin}.jpg" class="h-6 w-6 rounded-full">`;
-            else icon = `<span class="material-symbols-outlined text-primary">shopping_bag</span>`;
-            return `
-            <div class="bg-card-background p-4 rounded-xl flex justify-between items-center border border-gray-100 dark:border-gray-800 shadow-sm animate-[fadeIn_0.3s]">
-                <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">${icon}</div>
-                    <div><p class="font-bold uppercase text-sm line-clamp-1 max-w-[150px]">${h.coin.replace('-', ' ')}</p><p class="text-xs text-text-secondary">${new Date(h.time).toLocaleTimeString()}</p></div>
-                </div>
-                <div class="text-right"><p class="font-bold text-lg">${h.coin==='shop'?'Item':h.amount}</p><p class="text-xs font-bold text-primary">৳${h.payout}</p></div>
-            </div>`
-        }).join('');
+        // Listen for value once to render
+        historyRef.once('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) {
+                list.innerHTML = `<div class="flex flex-col items-center justify-center py-20 opacity-50"><span class="material-symbols-outlined text-6xl mb-2">history</span><p>No transactions yet.</p></div>`;
+                return;
+            }
+
+            const historyArray = Object.values(data).reverse(); // Newest first
+            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+            
+            // Filter last 24h
+            const validHistory = historyArray.filter(h => h.time > oneDayAgo);
+
+            if(validHistory.length === 0) {
+                 list.innerHTML = `<div class="flex flex-col items-center justify-center py-20 opacity-50"><span class="material-symbols-outlined text-6xl mb-2">history</span><p>No recent transactions.</p></div>`;
+                 return;
+            }
+
+            list.innerHTML = validHistory.map(h => {
+                let icon = 'monetization_on';
+                if(h.coin !== 'shop') icon = `<img src="./${h.coin === 'top-coin' ? 'top' : h.coin}.jpg" class="h-6 w-6 rounded-full">`;
+                else icon = `<span class="material-symbols-outlined text-primary">shopping_bag</span>`;
+                return `
+                <div class="bg-card-background p-4 rounded-xl flex justify-between items-center border border-gray-100 dark:border-gray-800 shadow-sm animate-[fadeIn_0.3s]">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">${icon}</div>
+                        <div><p class="font-bold uppercase text-sm line-clamp-1 max-w-[150px]">${h.coin.replace('-', ' ')}</p><p class="text-xs text-text-secondary">${new Date(h.time).toLocaleTimeString()}</p></div>
+                    </div>
+                    <div class="text-right"><p class="font-bold text-lg">${h.coin==='shop'?'Item':h.amount}</p><p class="text-xs font-bold text-primary">৳${h.payout}</p></div>
+                </div>`
+            }).join('');
+        });
     }
 
     function showPage(pageId) {
@@ -928,7 +960,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 $(`#${coin}-rates-display`).innerHTML = `<div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-gray-700"><div><p class="text-xs text-text-secondary">Low</p><p class="font-bold text-primary">৳${r.tier1}</p></div><div><p class="text-xs text-text-secondary">Mid</p><p class="font-bold text-primary">৳${r.tier2}</p></div><div><p class="text-xs text-text-secondary">High</p><p class="font-bold text-primary">৳${r.tier3}</p></div></div>`;
             });
 
-             // Load Admin Rates Inputs
              if (telegramUser.id.toString() === ADMIN_TELEGRAM_ID) {
                 const fillAdmin = (coin, prefix) => {
                     const r = marketRates[coin] || {tier1:0,tier2:0,tier3:0};
