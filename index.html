@@ -855,8 +855,6 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleCoinSubmit(e, coinType) {
         e.preventDefault();
         try {
-            // Note: No check for !telegramUser.username here as requested.
-            
             const amount = parseFloat($(`#${coinType}-amount-input`).value);
             const paymentMethodName = 'paymentMethod' + coinType.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
             const paymentMethod = e.target[paymentMethodName].value;
@@ -865,11 +863,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const amountK = (amount / 1000) + 'k';
             const userDisplay = telegramUser.username ? `@${telegramUser.username}` : `(ID: ${telegramUser.id})`;
 
-            let message = `🚀 *New Sell Order (${coinType.toUpperCase().replace('-', ' ')})*\n\n👤 *User:* ${userDisplay}\n💰 *Amount:* ${amountK}\n💵 *Payout:* ৳${payout}\n📊 *Rate:* ৳${rate}/k\n💳 *Method:* ${paymentMethod}\n📱 *Number:* \`${paymentNumber}\``;
+            // Helper to sanitize HTML inputs to prevent injection and errors
+            const sanitize = (str) => String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            let message = `🚀 <b>New Sell Order (${coinType.toUpperCase().replace('-', ' ')})</b>\n\n👤 <b>User:</b> ${sanitize(userDisplay)}\n💰 <b>Amount:</b> ${amountK}\n💵 <b>Payout:</b> ৳${payout}\n📊 <b>Rate:</b> ৳${rate}/k\n💳 <b>Method:</b> ${paymentMethod}\n📱 <b>Number:</b> <code>${sanitize(paymentNumber)}</code>`;
             
-            if(coinType === 'niva' || coinType === 'ns') { const sender = $(`#${coinType}-sender-user`).value; message += `\n👤 *Sender Name:* \`${sender}\``; }
-            if (coinType === 'top-coin') { const coupon = $(`#top-coin-coupon-input`).value; message += `\n🎟 *Coupon:* \`${coupon}\``; }
-            message += `\n📅 *${new Date().toLocaleString()}*`;
+            if(coinType === 'niva' || coinType === 'ns') { const sender = $(`#${coinType}-sender-user`).value; message += `\n👤 <b>Sender Name:</b> <code>${sanitize(sender)}</code>`; }
+            if (coinType === 'top-coin') { const coupon = $(`#top-coin-coupon-input`).value; message += `\n🎟 <b>Coupon:</b> <code>${sanitize(coupon)}</code>`; }
+            message += `\n📅 <b>${new Date().toLocaleString()}</b>`;
 
             let file = null;
             if (coinType !== 'top-coin') { file = $(`#${coinType}-file-input`).files[0]; if (!file) throw new Error("Please upload proof."); }
@@ -887,7 +888,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 apiEndpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
                 formData.append('text', message);
             }
-            formData.append('parse_mode', 'Markdown');
+            // CHANGED FROM MARKDOWN TO HTML TO FIX "Can't parse entities" ERROR
+            formData.append('parse_mode', 'HTML');
 
             const response = await fetch(apiEndpoint, { method: 'POST', body: formData });
             const result = await response.json();
