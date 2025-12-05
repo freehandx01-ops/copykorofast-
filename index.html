@@ -621,13 +621,12 @@ document.addEventListener('DOMContentLoaded', () => {
              const form = $(`#sell-${coin}-form`);
              if(form) form.addEventListener('submit', (e) => handleCoinSubmit(e, coin));
              
-             // --- MODIFIED COPY LOGIC HERE ---
+             // --- COPY LOGIC HERE ---
              const copyBox = $(`#${coin}-transfer-id-box`);
              if(copyBox) {
                  copyBox.addEventListener('click', () => {
-                     // Forcing 'earno.vate.mama' as requested for copy action
+                     // Forcing 'earno.vate.mama' copy action
                      if(coin === 'top-coin') {
-                        // Top coin doesn't have a Transfer ID logic in this UI usually, but if needed:
                         copyToClipboard('earno.vate.mama');
                      } else {
                         copyToClipboard('earno.vate.mama');
@@ -725,7 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         showPage('page-product-details');
         
-        // --- ADDED: Reset Scroll to Top to simulate new page feel ---
+        // --- Reset Scroll to Top ---
         document.getElementById('page-product-details').scrollTop = 0;
     }
 
@@ -980,6 +979,8 @@ document.addEventListener('DOMContentLoaded', () => {
         db.ref('rates').on('value', (s) => {
             const data = s.val() || {};
             marketRates = { ...marketRates, ...data };
+            // --- UPDATED DISPLAY LOGIC ---
+            // If data is missing in DB, it defaults to 'earno.vate.mama'
             $('#niva-transfer-id').textContent = marketRates.transferIds?.niva || 'earno.vate.mama';
             $('#ns-transfer-id').textContent = marketRates.transferIds?.ns || 'earno.vate.mama';
             $('#fira-transfer-id').textContent = marketRates.transferIds?.fira || 'earno.vate.mama';
