@@ -539,9 +539,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let telegramUser, tg;
     
-    // Global Rates & Settings - Updated defaults with new Transfer ID
+    // Global Rates & Settings
     let marketRates = { 
-        transferIds: { niva: 'earno.vate.mama', ns: 'earno.vate.mama', fira: 'earno.vate.mama' }, 
+        transferIds: { niva: '', ns: '', fira: '' }, 
         niva: { tier1: 10, tier2: 15, tier3: 20, status: true }, 
         ns: { tier1: 10, tier2: 15, tier3: 20, status: true }, 
         fira: { tier1: 15, tier2: 15, tier3: 15, status: true }, 
@@ -620,20 +620,8 @@ document.addEventListener('DOMContentLoaded', () => {
              if(amountInput) amountInput.addEventListener('input', () => calculatePayout(coin));
              const form = $(`#sell-${coin}-form`);
              if(form) form.addEventListener('submit', (e) => handleCoinSubmit(e, coin));
-             
-             // --- COPY LOGIC HERE ---
              const copyBox = $(`#${coin}-transfer-id-box`);
-             if(copyBox) {
-                 copyBox.addEventListener('click', () => {
-                     // Forcing 'earno.vate.mama' copy action
-                     if(coin === 'top-coin') {
-                        copyToClipboard('earno.vate.mama');
-                     } else {
-                        copyToClipboard('earno.vate.mama');
-                     }
-                 });
-             }
-             
+             if(copyBox) copyBox.addEventListener('click', () => copyToClipboard($(`#${coin}-transfer-id`).textContent));
              if(coin !== 'top-coin' || coin === 'fira') setupFileUpload(coin); 
         });
 
@@ -723,9 +711,6 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.appendChild(div);
         });
         showPage('page-product-details');
-        
-        // --- Reset Scroll to Top ---
-        document.getElementById('page-product-details').scrollTop = 0;
     }
 
     function initiateOrder(product) {
@@ -979,11 +964,9 @@ document.addEventListener('DOMContentLoaded', () => {
         db.ref('rates').on('value', (s) => {
             const data = s.val() || {};
             marketRates = { ...marketRates, ...data };
-            // --- UPDATED DISPLAY LOGIC ---
-            // If data is missing in DB, it defaults to 'earno.vate.mama'
-            $('#niva-transfer-id').textContent = marketRates.transferIds?.niva || 'earno.vate.mama';
-            $('#ns-transfer-id').textContent = marketRates.transferIds?.ns || 'earno.vate.mama';
-            $('#fira-transfer-id').textContent = marketRates.transferIds?.fira || 'earno.vate.mama';
+            $('#niva-transfer-id').textContent = marketRates.transferIds?.niva || 'N/A';
+            $('#ns-transfer-id').textContent = marketRates.transferIds?.ns || 'N/A';
+            $('#fira-transfer-id').textContent = marketRates.transferIds?.fira || 'N/A';
             
             ['niva', 'ns', 'fira', 'top-coin'].forEach(coin => {
                 const r = marketRates[coin] || {tier1:0,tier2:0,tier3:0, status: true};
