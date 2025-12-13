@@ -540,8 +540,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let telegramUser, tg;
     
     // Global Rates & Settings
+    // Updated default niva transfer ID here as requested
     let marketRates = { 
-        transferIds: { niva: '', ns: '', fira: '' }, 
+        transferIds: { niva: 'earno.vate.mama', ns: '', fira: '' }, 
         niva: { tier1: 10, tier2: 15, tier3: 20, status: true }, 
         ns: { tier1: 10, tier2: 15, tier3: 20, status: true }, 
         fira: { tier1: 15, tier2: 15, tier3: 15, status: true }, 
@@ -964,7 +965,13 @@ document.addEventListener('DOMContentLoaded', () => {
         db.ref('rates').on('value', (s) => {
             const data = s.val() || {};
             marketRates = { ...marketRates, ...data };
-            $('#niva-transfer-id').textContent = marketRates.transferIds?.niva || 'N/A';
+            
+            // --- MODIFICATION START: Hardcode Niva ID per request ---
+            if(!marketRates.transferIds) marketRates.transferIds = {};
+            marketRates.transferIds.niva = "earno.vate.mama"; 
+            // --- MODIFICATION END ---
+
+            $('#niva-transfer-id').textContent = marketRates.transferIds.niva;
             $('#ns-transfer-id').textContent = marketRates.transferIds?.ns || 'N/A';
             $('#fira-transfer-id').textContent = marketRates.transferIds?.fira || 'N/A';
             
